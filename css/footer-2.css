@@ -1,0 +1,85 @@
+@media (max-width: 1280px) {
+  body {
+    font-size: 1.0769vw;
+    line-height: 113%;
+  }
+  .UI_1 {
+    font-size: 0.95vw;
+    line-height: 125%;
+    margin-bottom: 0.79vw;
+  }
+  h5 {
+    font-size: 1.07vw;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 3.5533vw;
+    letter-spacing: -0.1421vw;
+  }
+  .mobile {
+    display: inherit !important;
+  }
+  .desktop {
+    display: none !important;
+  }
+  .cross-icon {
+    width: 6.0914vw;
+    height: 6.0914vw;
+  }
+  .UI_1 {
+    font-size: 3.0457vw;
+    font-weight: 600;
+    line-height: 120%;
+    letter-spacing: 0.0609vw;
+  }
+  h1 {
+    font-family: Geist;
+    font-size: 10.1523vw;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 80%;
+    letter-spacing: -0.8122vw;
+    text-transform: uppercase;
+  }
+  h2 {
+    font-family: Geist;
+    font-size: 8.1218vw;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 88%;
+    letter-spacing: -0.6497vw;
+    text-transform: uppercase;
+  }
+  h3 {
+    font-family: Geist;
+    font-size: 6.0914vw;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 88%;
+    letter-spacing: -0.4873vw;
+    text-transform: uppercase;
+  }
+  h4 {
+    font-family: Geist;
+    font-size: 4.0609vw;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 88%;
+    letter-spacing: -0.1624vw;
+    text-transform: uppercase;
+  }
+  h5 {
+    font-family: Geist;
+    font-size: 3.5533vw;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 104%;
+    letter-spacing: -0.1421vw;
+    text-transform: uppercase;
+    margin-bottom: 4.0609vw;
+    width: 32.7411vw;
+    flex-shrink: 0;
+  }
+}

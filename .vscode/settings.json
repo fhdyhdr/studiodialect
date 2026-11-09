@@ -1,0 +1,7 @@
+{
+  "liveServer.settings.proxy": {
+    "enable": true,
+    "baseUri": "/_clone/api/z4rfkkmu.apicdn.sanity.io",
+    "proxyUri": "https://z4rfkkmu.apicdn.sanity.io"
+  }
+}

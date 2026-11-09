@@ -1,0 +1,334 @@
+.navigation__nav {
+  width: 100%;
+  padding: 2.5vw 1.6667vw 2.5vw 2.5vw;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.navigation__item {
+  margin: 0;
+}
+
+.navigation__link {
+  text-decoration: none;
+  color: #d2d2d2;
+  transition: color 0.2s ease;
+  display: block;
+}
+
+.navigation__link-heading {
+  display: inline-block;
+  transition: color 0.2s ease;
+  height: 0.8em;
+  overflow-y: hidden;
+  padding-right: 0.1em;
+  line-height: 1em;
+  font-size: min(9.5833vw, 17vh);
+  font-family: Geist;
+  font-weight: 700;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: -0.7667vw;
+}
+
+.navigation__link-text {
+  display: inline-block;
+  position: relative;
+  display: block;
+  transition: 0.5s;
+  line-height: 0.8em;
+}
+
+.navigation__link:hover .navigation__link-text {
+  transform: translateY(-0.8em);
+}
+
+.navigation__link__text--duplicate {
+  color: #df0;
+}
+
+.navigation__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #242424;
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0s 0.75s;
+  mask-mode: luminance;
+  -webkit-mask-position: center center;
+  mask-position: center center;
+  -webkit-mask-size: cover;
+  mask-size: cover;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.navigation__overlay--open {
+  opacity: 1;
+  pointer-events: all;
+  transition: opacity 0s 0s;
+}
+
+.navigation__overlay canvas {
+  position: absolute;
+  image-rendering: pixelated;
+  width: 10.4167vw;
+  height: 10.4167vw;
+  left: 2.6042vw;
+  top: 2.6042vw;
+  display: none;
+}
+
+.navigation__menu-list {
+  list-style: none;
+  text-align: right;
+  margin: 0;
+  padding: 0;
+}
+
+.navigation__logo,
+.navigation__menu {
+  clip-path: inset(120% -100% -100% -100%);
+}
+
+.loaded .navigation__logo,
+.loaded .navigation__menu {
+  animation: menu-reveal 0.35s 0.55s ease-in-out both;
+}
+
+.loaded .navigation__logo:not(.navigation__logo--fixed),
+.loaded .navigation__menu:not(.navigation__menu--fixed) {
+  animation: menu-reveal 0.35s 2.25s ease-in-out both;
+}
+
+.navigation__background.navigation__background--on-top {
+  background: transparent;
+}
+
+.navigation__logo--on-top {
+  background: url("data:image/svg+xml,%3c?xml%20version='1.0'%20encoding='UTF-8'?%3e%3csvg%20id='Layer_1'%20xmlns='http://www.w3.org/2000/svg'%20version='1.1'%20viewBox='0%200%20119.63%2016'%3e%3c!--%20Generator:%20Adobe%20Illustrator%2029.8.3,%20SVG%20Export%20Plug-In%20.%20SVG%20Version:%202.1.1%20Build%203)%20--%3e%3cdefs%3e%3cstyle%3e%20.st0%20{%20fill:%20%23d2d2d2;%20}%20%3c/style%3e%3c/defs%3e%3cpath%20class='st0'%20d='M98.5,0v3.68h8.03v12.3h4.86V3.69h7.99V0h-20.88Z'/%3e%3cpath%20class='st0'%20d='M-18.35,0c-.07.02.07-.02,0,0Z'/%3e%3cpath%20class='st0'%20d='M-10.1,15.99c-.09.03.1-.03,0,0Z'/%3e%3cpath%20class='st0'%20d='M-18.27,15.99c-.1-.03.09.03,0,0Z'/%3e%3cpath%20class='st0'%20d='M-10.02,0c-.07-.02.07.02,0,0Z'/%3e%3cpath%20class='st0'%20d='M85.07,15.99c-.08-.02.08.03,0,0Z'/%3e%3cpath%20class='st0'%20d='M85.07,0c-.08.02.08-.03,0,0Z'/%3e%3cpath%20class='st0'%20d='M93.33,15.99c-.08.03.08-.02,0,0Z'/%3e%3cpath%20class='st0'%20d='M93.33,0c-.08-.03.08.02,0,0Z'/%3e%3cpath%20class='st0'%20d='M30.55,0l-5.67,15.98h4.88l.96-2.98h8.83l.96,2.98h4.88L39.72,0h-9.17ZM32.07,9.31l1.93-5.7h2.28l1.93,5.7h-6.14Z'/%3e%3cpath%20class='st0'%20d='M50.85,0h-4.88v15.98h15.99v-3.71h-11.1V0Z'/%3e%3cpath%20class='st0'%20d='M62.59,15.99h16.3v-3.68h-11.51v-2.68h10.16v-3.71h-10.16v-2.23h11.51V0h-16.3v15.98Z'/%3e%3cpath%20class='st0'%20d='M24.3,0h-4.86v15.98h4.86V0Z'/%3e%3cpath%20class='st0'%20d='M87.04,3.69h.26s.07,0,.1,0h2.62s.07,0,.1,0h.33c1.86,0,2.63,1.31,2.95,2.47h5.04c-.05-.27-.11-.54-.19-.81-.24-.83-.6-1.59-1.07-2.27-.47-.7-1.04-1.3-1.73-1.82-.14-.1-.29-.2-.45-.3-1.06-.65-2.28-.95-3.5-.95h-5.6c-1.22,0-2.44.3-3.5.95-.16.1-.31.2-.45.3-.68.52-1.26,1.12-1.73,1.82-.47.68-.82,1.44-1.07,2.27-.24.83-.36,1.7-.36,2.62s.11,1.76.34,2.59c.23.83.57,1.61,1.02,2.32.45.7,1.03,1.31,1.73,1.84.21.16.46.32.74.47,1,.54,2.12.8,3.24.8h5.67c1.12,0,2.24-.26,3.24-.8.28-.15.53-.31.74-.47.7-.53,1.27-1.14,1.73-1.84.46-.71.8-1.49,1.02-2.32.07-.24.12-.48.16-.72h-5.08c-.35,1.12-1.13,2.31-2.9,2.31h-3.42c-3.34,0-3.17-4.23-3.17-4.23,0,0-.17-4.23,3.17-4.23Z'/%3e%3cpath%20class='st0'%20d='M16.75,2.3c-.67-.71-1.51-1.27-2.54-1.68C13.22.22,12.07.02,10.76,0H0v15.98h10.61c.97,0,1.86-.12,2.69-.36.84-.26,1.59-.62,2.26-1.09.68-.49,1.26-1.07,1.75-1.75.48-.68.85-1.45,1.11-2.3.26-.85.38-1.77.38-2.75,0-1.04-.17-2.04-.51-2.98-.34-.94-.85-1.76-1.53-2.46h0ZM10.9,12.15h-6.04V3.69h6.04c3.25,0,3.09,4.23,3.09,4.23,0,0,.16,4.23-3.09,4.23Z'/%3e%3c/svg%3e")
+    0% 50% / contain no-repeat;
+}
+
+@keyframes menu-reveal {
+  0% {
+    clip-path: inset(120% -100% -100% -100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (max-width: 1280px) {
+  .navigation__menu {
+    top: 28.9vw;
+  }
+  .navigation__logo {
+    top: 28.9vw;
+    height: 2.5vw;
+    width: 9.4vw;
+  }
+  .navigation__background {
+    height: 2.5vw;
+  }
+  .navigation__menubutton {
+    height: 2.5vw;
+    width: 12.5vw;
+    font-size: 1.25vw;
+  }
+  .navigation__menu {
+    gap: 3.75vw;
+  }
+  .navigation__mousecoords {
+    font-size: 0.9vw;
+  }
+}
+
+@media (max-width: 768px) {
+  .navigation__logo {
+    position: absolute;
+    top: 0;
+    left: 4.0609vw;
+    width: 27.4112vw;
+    height: 8.1218vw;
+    margin-top: 0;
+    z-index: 10000;
+  }
+  .navigation__logo--fixed {
+    position: fixed;
+    top: 0;
+    left: 4.0609vw;
+    z-index: 10000;
+  }
+  .navigation__logo--on-top,
+  .navigation__logo {
+    position: fixed !important;
+    top: 0 !important;
+    left: 4.0609vw !important;
+    z-index: 10000;
+  }
+  .navigation__menu {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 0;
+    white-space: nowrap;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4.0609vw;
+  }
+  .navigation__mousecoords {
+    display: none;
+  }
+  .navigation__menubutton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2.0305vw;
+    height: 8.1218vw;
+    width: 40.4063vw;
+    padding: 2.5381vw 4.0609vw;
+    font-family: Geist Mono;
+    font-size: 4.0609vw;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%;
+    letter-spacing: 0.0812vw;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .navigation__menu--fixed {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 10000;
+  }
+  .navigation__menu--on-top,
+  .navigation__menu {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    z-index: 10000;
+  }
+  .navigation__nav {
+    padding: 4.0609vw;
+  }
+  .navigation__item {
+    margin-top: 4.0609vw;
+  }
+  .navigation__link {
+    text-decoration: none;
+    color: #d2d2d2;
+    transition: color 0.2s ease;
+    display: block;
+  }
+  .navigation__link-heading {
+    font-family: Geist;
+    font-size: 10.1523vw;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 80%;
+    letter-spacing: -0.8122vw;
+    text-transform: uppercase;
+  }
+  .navigation__overlay {
+    inset: 0;
+    width: auto;
+    height: auto;
+  }
+  .navigation__background {
+    height: 8.1218vw;
+  }
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+}
+
+.main {
+  flex: 1;
+}
+
+/* https://studiodialect.com/assets/index-Cu4g5WTY.css */
+:root {
+  --color-primary: #d2d2d2;
+  --color-secondary: #242424;
+  --color-text: #d2d2d2;
+  --color-text-light: #d2d2d2;
+  --color-bg: #242424;
+  --color-bg-alt: #242424;
+  --BG: #242424;
+  --Black: #000;
+  --Content: #d2d2d2;
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 4rem;
+  --spacing-xl: 6rem;
+  --font-sans:
+    "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
+  --font-mono: "Geist Mono", "Courier New", monospace;
+  --font-family-base: "Geist", sans-serif;
+  --font-size-base: 0.7292vw;
+  --line-height-base: 1.5;
+  --color-background: var(--BG);
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  --breakpoint-mobile: 40vw;
+  --breakpoint-tablet: 53.3333vw;
+  --breakpoint-desktop: 72.9167vw;
+  --Highlight-Active: #dfff00;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: #242424;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-x: none;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--Content);
+  background-color: #242424;
+  line-height: 1.6;
+  font-family: Geist;
+  font-size: 0.8292vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -0.0292vw;
+  overscroll-behavior-x: none;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}

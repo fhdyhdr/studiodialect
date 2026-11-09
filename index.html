@@ -1,0 +1,3673 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <script data-site-cloner-path-shim>(function () {
+  try {
+    var loc = window.location;
+    var path = loc.pathname;
+    var normalized = path.replace(/\/index\.html?$/i, "/").replace(/\/index\.html?\//i, "/");
+    if (normalized === path) return;
+    var target = normalized + (loc.search || "") + (loc.hash || "");
+    window.history.replaceState(window.history.state, "", target);
+  } catch (ignored) {}
+})();</script>
+  <base href="/" />
+    <script data-site-cloner-canvas-hook>
+      (function () {
+        if (window.__scCanvasHook) return;
+        window.__scCanvasHook = true;
+        var P = [
+          {
+            before:
+              "/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/f4f492320dc49087797c390abffdf38d75bd585b-600x800.png?w=512&fm=webp",
+            after: "media/f7ae444b51f55a0b39be33f73014be0c.jpg",
+            canvas: true,
+          },
+          {
+            before:
+              "/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/09d746dc848ed0f742e9e3f97ac9f9cbbec8dccf-600x800.png?w=512&fm=webp",
+            after: "media/3b234bc0fe57bfade823f789df92e51d.jpg",
+            canvas: true,
+          },
+          {
+            before:
+              "/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/879b4e21ce3388ecad5a83b0aa876bf9ed2b151e-600x800.png?w=512&fm=webp",
+            after: "media/0d035b219f747eb70752ffbfcd5befc9.png",
+            canvas: true,
+          },
+          {
+            before:
+              "/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/1f345fd25aa3a64e45124544561695866f90c528-600x800.png?w=512&fm=webp",
+            after: "media/1cccc11a18fd9ef5fb5abc19f62bcb2a.jpg",
+            canvas: true,
+          },
+          {
+            before:
+              "/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/be06227df5584683a466ab79fd47c8f79b09f767-600x800.png?w=512&fm=webp",
+            after: "media/dece8df8d38e95440602d9b411489785.jpg",
+            canvas: true,
+          },
+        ];
+        var K = "";
+        if (K) {
+          try {
+            var S = JSON.parse(localStorage.getItem(K) || "[]");
+            for (var s = 0; s < S.length; s++) {
+              if (S[s] && S[s].canvas && S[s].before && S[s].after) P.push(S[s]);
+            }
+          } catch (e) {}
+        }
+        var L = (window.__scCanvasLoads = []),
+          M = {};
+        function name(v) {
+          var c = String(v || "")
+            .split("#")[0]
+            .split("?")[0];
+          var k = c.lastIndexOf("/");
+          return k >= 0 ? c.slice(k + 1) : c;
+        }
+        function parent(v) {
+          var p = String(v || "")
+            .split("#")[0]
+            .split("?")[0]
+            .split("/");
+          return p.length > 1 ? p[p.length - 2] : "";
+        }
+        function swap(u) {
+          if (typeof u !== "string" || !u) return u;
+          var head = u.slice(0, 5).toLowerCase();
+          if (head === "data:" || head === "blob:") return u;
+          if (K && L.length < 400) {
+            try {
+              var h = new URL(u, location.href).href;
+              if (!M[h]) {
+                M[h] = 1;
+                L.push(h);
+              }
+            } catch (e) {}
+          }
+          var n = name(u);
+          for (var i = 0; i < P.length; i++) {
+            var b = P[i].before;
+            if (u === b) return P[i].after;
+            if (n && n === name(b) && (n.length >= 20 || /[0-9a-f]{8}/i.test(n) || parent(u) === parent(b)))
+              return P[i].after;
+          }
+          return u;
+        }
+        try {
+          var d = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, "src");
+          if (d && d.set)
+            Object.defineProperty(HTMLImageElement.prototype, "src", {
+              configurable: true,
+              enumerable: d.enumerable,
+              get: d.get,
+              set: function (v) {
+                d.set.call(this, swap(v));
+              },
+            });
+          var sa = Element.prototype.setAttribute;
+          Element.prototype.setAttribute = function (n, v) {
+            if (this.tagName === "IMG" && String(n).toLowerCase() === "src") v = swap(String(v));
+            return sa.call(this, n, v);
+          };
+        } catch (e) {}
+        // Scenes rendered from a worker (cosmos.so) load their pictures out of reach
+        // of these hooks; without OffscreenCanvas they fall back to the main thread.
+        // The editor needs them there too: its texture records, click probe and
+        // highlight only see main-thread WebGL.
+        if ((P.length || K) && window.HTMLCanvasElement) {
+          try {
+            delete HTMLCanvasElement.prototype.transferControlToOffscreen;
+          } catch (e) {}
+        }
+        // Image loader workers fetch on their own thread: start each worker behind a
+        // prelude that carries the same swap.
+        if (P.length && window.Worker && window.Blob && window.URL && URL.createObjectURL) {
+          var W = window.Worker;
+          // A blob worker cannot resolve a root-relative replacement (/api/public/
+          // clone-media/...): hand it absolute URLs.
+          var WP = [];
+          for (var wp = 0; wp < P.length; wp++) {
+            var after = P[wp].after;
+            try {
+              if (!/^(data|blob):/i.test(after)) after = new URL(after, location.href).href;
+            } catch (e) {}
+            WP.push({ before: P[wp].before, after: after, canvas: P[wp].canvas });
+          }
+          var pre =
+            "var P=" +
+            JSON.stringify(WP) +
+            ",K='',L=[],M={};" +
+            name +
+            parent +
+            swap +
+            "if(self.fetch){var f=self.fetch;self.fetch=function(r,o){try{if(typeof r==='string')r=swap(r);else if(r&&typeof r.url==='string'&&(!r.method||r.method==='GET')){var nu=swap(r.url);if(nu!==r.url)r=nu;}else if(r&&typeof r.href==='string')r=swap(r.href);}catch(e){}return f.call(this,r,o);};}" +
+            "if(self.XMLHttpRequest){var xo=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){var a=[].slice.call(arguments);try{a[1]=swap(String(u));}catch(e){}return xo.apply(this,a);};}";
+          var Hooked = function (u, o) {
+            try {
+              var abs = new URL(String(u), location.href).href;
+              if (/^(blob|data):/i.test(abs)) return new W(u, o);
+              var mod = o && o.type === "module";
+              // A blob worker has no base URL and drops the #hash (Turbopack passes
+              // its chunk list there): resolve against the real script URL instead.
+              var base =
+                "var B=" +
+                JSON.stringify(abs) +
+                ";" +
+                "if(self.importScripts){var is=self.importScripts;self.importScripts=function(){var a=[].map.call(arguments,function(x){return new URL(x,B).href;});return is.apply(self,a);};}";
+              var fixFetch =
+                "if(self.fetch){var g=self.fetch;self.fetch=function(r,o){if(typeof r==='string'){try{r=new URL(r,B).href;}catch(e){}}return g.call(this,r,o);};}";
+              var body =
+                pre +
+                base +
+                fixFetch +
+                (mod ? "import(" + JSON.stringify(abs) + ");" : "importScripts(" + JSON.stringify(abs) + ");");
+              var hash = abs.indexOf("#") >= 0 ? abs.slice(abs.indexOf("#")) : "";
+              return new W(URL.createObjectURL(new Blob([body], { type: "text/javascript" })) + hash, o);
+            } catch (e) {
+              return new W(u, o);
+            }
+          };
+          Hooked.prototype = W.prototype;
+          try {
+            window.Worker = Hooked;
+          } catch (e) {}
+        }
+        if (window.fetch) {
+          var f = window.fetch;
+          window.fetch = function (r, o) {
+            try {
+              if (typeof r === "string") r = swap(r);
+              else if (r && typeof r.href === "string" && typeof r.url !== "string") r = swap(r.href);
+              else if (r && typeof r.url === "string" && (!r.method || r.method === "GET")) {
+                var nu = swap(r.url);
+                if (nu !== r.url) r = nu;
+              }
+            } catch (e) {}
+            return f.call(this, r, o);
+          };
+        }
+        if (window.XMLHttpRequest) {
+          var xo = XMLHttpRequest.prototype.open;
+          XMLHttpRequest.prototype.open = function (m, u) {
+            var a = [].slice.call(arguments);
+            try {
+              a[1] = swap(String(u));
+            } catch (e) {}
+            return xo.apply(this, a);
+          };
+        }
+        // Editor only: remember which <video>/<img> each WebGL canvas uploads as a
+        // texture, so the inspector lists what that canvas really draws (and can tell
+        // which canvas paints a given spot) instead of every video on the page.
+        // It also keeps the texture each one was uploaded into, so the inspector can
+        // tint exactly that texture (window.__scTexMark) and the author sees where the
+        // scene draws the picture picked in the canvas media list.
+        if (K) {
+          var TX = (window.__scTextures = []),
+            RAW = [],
+            MIP = typeof WeakSet === "function" ? new WeakSet() : null;
+          var HL = (window.__scTexHL = { els: [] }),
+            TINT = typeof WeakMap === "function" ? new WeakMap() : null;
+          var raw = function (g, fn) {
+            for (var i = 0; i < RAW.length; i++) if (RAW[i][1] === fn && RAW[i][0].isPrototypeOf(g)) return RAW[i][2];
+            return null;
+          };
+          var tinted = function (el) {
+            var w = el.videoWidth || el.naturalWidth || el.width,
+              h = el.videoHeight || el.naturalHeight || el.height;
+            if (!w || !h) return null;
+            var c = TINT && TINT.get(el);
+            if (!c || c.width !== w || c.height !== h) {
+              c = document.createElement("canvas");
+              c.width = w;
+              c.height = h;
+              if (TINT) TINT.set(el, c);
+            }
+            try {
+              var x = c.getContext("2d");
+              x.clearRect(0, 0, w, h);
+              x.drawImage(el, 0, 0, w, h);
+              x.fillStyle = "rgba(13,153,255,0.42)";
+              x.fillRect(0, 0, w, h);
+              var lw = Math.max(4, Math.round(Math.min(w, h) * 0.035));
+              x.lineWidth = lw;
+              x.strokeStyle = "#0d99ff";
+              x.strokeRect(lw / 2, lw / 2, w - lw, h - lw);
+            } catch (e) {
+              return null;
+            }
+            return c;
+          };
+          var note = function (g, el, a, at, fn) {
+            var canvas = g.canvas;
+            if (!canvas || !el) return;
+            var entry = null;
+            for (var i = 0; i < TX.length; i++)
+              if (TX[i].canvas === canvas && TX[i].el === el) {
+                entry = TX[i];
+                break;
+              }
+            if (!entry) {
+              if (TX.length >= 300) return;
+              entry = { canvas: canvas, el: el };
+              TX.push(entry);
+            }
+            // texStorage2D + texSubImage2D at 0,0 (three.js on WebGL2) counts too.
+            if (a[0] !== g.TEXTURE_2D || a[1] !== 0 || at < 2 || (fn === "texSubImage2D" && (a[2] !== 0 || a[3] !== 0)))
+              return;
+            try {
+              entry.gl = g;
+              entry.tex = g.getParameter(g.TEXTURE_BINDING_2D);
+              entry.fmt = a[at - 2];
+              entry.type = a[at - 1];
+              entry.flip = g.getParameter(g.UNPACK_FLIP_Y_WEBGL);
+              entry.premul = g.getParameter(g.UNPACK_PREMULTIPLY_ALPHA_WEBGL);
+            } catch (e) {}
+          };
+          // ImageBitmaps carry no URL. Remember where each one came from: decoded on
+          // this thread (fetch -> blob -> createImageBitmap) or handed over by a
+          // loader worker in a message next to its url (cosmos.so).
+          var BM = typeof WeakMap === "function" ? new WeakMap() : null,
+            BLOB = typeof WeakMap === "function" ? new WeakMap() : null,
+            URLS = {};
+          var urlEl = function (u) {
+            if (!u) return null;
+            if (!URLS[u])
+              URLS[u] = {
+                tagName: "IMG",
+                url: u,
+                currentSrc: u,
+                getAttribute: function (n) {
+                  return n === "src" ? u : null;
+                },
+              };
+            return URLS[u];
+          };
+          var isBitmap = function (v) {
+            return typeof ImageBitmap !== "undefined" && v instanceof ImageBitmap;
+          };
+          var scanMsg = function (d, depth) {
+            if (
+              !BM ||
+              !d ||
+              typeof d !== "object" ||
+              depth > 3 ||
+              ArrayBuffer.isView(d) ||
+              d instanceof ArrayBuffer ||
+              isBitmap(d)
+            )
+              return;
+            var keys = Object.keys(d).slice(0, 24),
+              url = "",
+              i;
+            for (i = 0; i < keys.length; i++) {
+              var v = d[keys[i]];
+              if (
+                typeof v === "string" &&
+                (/^(https?:)?[/][/]/i.test(v) || /^[/.][^ ]*[.a-z0-9]$/i.test(v)) &&
+                (!url || /^(url|src|href)$/i.test(keys[i]))
+              )
+                url = v;
+            }
+            for (i = 0; i < keys.length; i++) {
+              var w = d[keys[i]];
+              if (isBitmap(w)) {
+                if (url) BM.set(w, url);
+              } else if (w && typeof w === "object") scanMsg(w, depth + 1);
+            }
+          };
+          var scanEvt = function (e) {
+            try {
+              scanMsg(e.data, 0);
+            } catch (x) {}
+          };
+          [window.MessagePort, window.Worker].forEach(function (T) {
+            var proto = T && T.prototype;
+            if (!proto) return;
+            var ae = proto.addEventListener || EventTarget.prototype.addEventListener;
+            var arm = function (t) {
+              if (!t.__scScan) {
+                t.__scScan = 1;
+                ae.call(t, "message", scanEvt);
+              }
+            };
+            proto.addEventListener = function (type) {
+              if (type === "message") arm(this);
+              return ae.apply(this, arguments);
+            };
+            var od = Object.getOwnPropertyDescriptor(proto, "onmessage");
+            if (od && od.set)
+              Object.defineProperty(proto, "onmessage", {
+                configurable: true,
+                enumerable: od.enumerable,
+                get: od.get,
+                set: function (fn) {
+                  arm(this);
+                  od.set.call(this, fn);
+                },
+              });
+          });
+          if (window.Response && Response.prototype.blob) {
+            var rb = Response.prototype.blob;
+            Response.prototype.blob = function () {
+              var u = this.url;
+              return rb.apply(this, arguments).then(function (b) {
+                try {
+                  if (u && BLOB) BLOB.set(b, u);
+                } catch (e) {}
+                return b;
+              });
+            };
+          }
+          if (window.createImageBitmap) {
+            var cib = window.createImageBitmap;
+            window.createImageBitmap = function (src) {
+              var u = "";
+              try {
+                u =
+                  (src &&
+                    (src.tagName === "IMG"
+                      ? src.currentSrc || src.src
+                      : (BLOB && BLOB.get(src)) || (BM && isBitmap(src) && BM.get(src)))) ||
+                  "";
+              } catch (e) {}
+              return cib.apply(window, arguments).then(function (b) {
+                if (u && BM) BM.set(b, u);
+                return b;
+              });
+            };
+          }
+          // Texture uploads that land in a layer of a texture array (or come from an
+          // ImageBitmap) are recorded per texture slot: tinting them means reading
+          // the slot back from the GPU, since the source is gone after the upload.
+          var slotEntry = function (g, tex, layer, el, w, h) {
+            var e = null;
+            for (var i = 0; i < TX.length; i++)
+              if (TX[i].gl === g && TX[i].tex === tex && TX[i].layer === layer && TX[i].rb) {
+                e = TX[i];
+                break;
+              }
+            if (!e) {
+              if (TX.length >= 800) return null;
+              e = { canvas: g.canvas, gl: g, tex: tex, layer: layer, rb: true };
+              TX.push(e);
+            }
+            e.el = el;
+            e.w = w;
+            e.h = h;
+            e.orig = null;
+            return e;
+          };
+          var srcEl = function (v) {
+            if (!v) return null;
+            if (v.tagName === "IMG" || v.tagName === "VIDEO") return v;
+            if (isBitmap(v) && BM) return urlEl(BM.get(v));
+            return null;
+          };
+          var withUnpack = function (g, fn) {
+            var gl2 = !!g.PIXEL_UNPACK_BUFFER,
+              names = [g.UNPACK_FLIP_Y_WEBGL, g.UNPACK_PREMULTIPLY_ALPHA_WEBGL, g.UNPACK_ALIGNMENT];
+            if (gl2)
+              names.push(
+                g.UNPACK_ROW_LENGTH,
+                g.UNPACK_IMAGE_HEIGHT,
+                g.UNPACK_SKIP_PIXELS,
+                g.UNPACK_SKIP_ROWS,
+                g.UNPACK_SKIP_IMAGES,
+              );
+            var defs = [false, false, 4, 0, 0, 0, 0, 0],
+              old = [],
+              pub = gl2 ? g.getParameter(g.PIXEL_UNPACK_BUFFER_BINDING) : null,
+              i;
+            for (i = 0; i < names.length; i++) {
+              old.push(g.getParameter(names[i]));
+              g.pixelStorei(names[i], defs[i]);
+            }
+            if (pub) g.bindBuffer(g.PIXEL_UNPACK_BUFFER, null);
+            var ok = true;
+            try {
+              fn();
+            } catch (e) {
+              ok = false;
+            }
+            for (i = 0; i < names.length; i++) g.pixelStorei(names[i], old[i]);
+            if (pub) g.bindBuffer(g.PIXEL_UNPACK_BUFFER, pub);
+            return ok;
+          };
+          var readSlot = function (g, e) {
+            if (!g.READ_FRAMEBUFFER || !e.w || !e.h) return null;
+            var prev = g.getParameter(g.READ_FRAMEBUFFER_BINDING),
+              fb = g.createFramebuffer(),
+              buf = null;
+            var ppb = g.getParameter(g.PIXEL_PACK_BUFFER_BINDING);
+            try {
+              g.bindFramebuffer(g.READ_FRAMEBUFFER, fb);
+              if (e.layer !== null)
+                g.framebufferTextureLayer(g.READ_FRAMEBUFFER, g.COLOR_ATTACHMENT0, e.tex, 0, e.layer);
+              else g.framebufferTexture2D(g.READ_FRAMEBUFFER, g.COLOR_ATTACHMENT0, g.TEXTURE_2D, e.tex, 0);
+              if (g.checkFramebufferStatus(g.READ_FRAMEBUFFER) === g.FRAMEBUFFER_COMPLETE) {
+                if (ppb) g.bindBuffer(g.PIXEL_PACK_BUFFER, null);
+                buf = new Uint8Array(e.w * e.h * 4);
+                g.readPixels(0, 0, e.w, e.h, g.RGBA, g.UNSIGNED_BYTE, buf);
+              }
+            } catch (x) {
+              buf = null;
+            }
+            if (ppb) g.bindBuffer(g.PIXEL_PACK_BUFFER, ppb);
+            g.bindFramebuffer(g.READ_FRAMEBUFFER, prev);
+            g.deleteFramebuffer(fb);
+            return buf;
+          };
+          var writeSlot = function (g, e, data) {
+            var arr = e.layer !== null,
+              target = arr ? g.TEXTURE_2D_ARRAY : g.TEXTURE_2D;
+            var fn = raw(g, arr ? "texSubImage3D" : "texSubImage2D");
+            if (!fn) return false;
+            var prev = g.getParameter(arr ? 0x8c1d : g.TEXTURE_BINDING_2D);
+            var ok = withUnpack(g, function () {
+              g.bindTexture(target, e.tex);
+              if (arr) fn.call(g, target, 0, 0, 0, e.layer, e.w, e.h, 1, g.RGBA, g.UNSIGNED_BYTE, data);
+              else fn.call(g, target, 0, 0, 0, e.w, e.h, g.RGBA, g.UNSIGNED_BYTE, data);
+              if (MIP && MIP.has(e.tex)) g.generateMipmap(target);
+            });
+            g.bindTexture(target, prev);
+            return ok;
+          };
+          var tintPixels = function (src, w, h) {
+            var out = new Uint8Array(src),
+              lw = Math.max(4, Math.round(Math.min(w, h) * 0.035));
+            for (var y = 0; y < h; y++)
+              for (var x = 0; x < w; x++) {
+                var i = (y * w + x) * 4;
+                if (x < lw || y < lw || x >= w - lw || y >= h - lw) {
+                  out[i] = 13;
+                  out[i + 1] = 153;
+                  out[i + 2] = 255;
+                  out[i + 3] = 255;
+                  continue;
+                }
+                out[i] = src[i] * 0.58 + 5.5;
+                out[i + 1] = src[i + 1] * 0.58 + 64;
+                out[i + 2] = src[i + 2] * 0.58 + 107;
+                out[i + 3] = src[i + 3] * 0.58 + 107;
+              }
+            return out;
+          };
+          var slotUpload = function (e, on) {
+            var g = e.gl;
+            if (!g || !g.READ_FRAMEBUFFER || (g.isContextLost && g.isContextLost())) return false;
+            if (on) {
+              if (!e.orig) e.orig = readSlot(g, e);
+              return !!e.orig && writeSlot(g, e, tintPixels(e.orig, e.w, e.h));
+            }
+            if (!e.orig) return false;
+            var ok = writeSlot(g, e, e.orig);
+            e.orig = null;
+            return ok;
+          };
+          // Re-uploads one recorded texture from the element, tinted or plain, and
+          // puts the context state the scene relies on back afterwards.
+          // Click probe (window.__scTexProbe): for a frame or two every draw into
+          // PR.canvas reads the pixel under the click before and after; a draw that
+          // changed it while sampling a recorded media texture is what shows there.
+          var PR = { canvas: null, rect: null, x: 0, y: 0, hits: [], token: 0 },
+            PRG = typeof WeakMap === "function" ? new WeakMap() : null;
+          var probeAt = function (g) {
+            var vp = g.getParameter(g.VIEWPORT),
+              r = PR.rect;
+            var px = Math.floor(vp[0] + ((PR.x - r.left) / r.width) * vp[2]),
+              py = Math.floor(vp[1] + (1 - (PR.y - r.top) / r.height) * vp[3]);
+            return px < 0 || py < 0 ? null : [px, py];
+          };
+          var readAt = function (g) {
+            try {
+              if (g.PIXEL_PACK_BUFFER_BINDING && g.getParameter(g.PIXEL_PACK_BUFFER_BINDING)) return null;
+              var at = probeAt(g);
+              if (!at) return null;
+              var px = at[0],
+                py = at[1];
+              var type = g.UNSIGNED_BYTE,
+                buf = new Uint8Array(4);
+              if (g.getParameter(g.FRAMEBUFFER_BINDING)) {
+                var t = g.getParameter(g.IMPLEMENTATION_COLOR_READ_TYPE);
+                if (t === g.FLOAT || t === 0x140b || t === 0x8d61) {
+                  type = g.FLOAT;
+                  buf = new Float32Array(4);
+                } else if (t !== g.UNSIGNED_BYTE) return null;
+              }
+              g.readPixels(px, py, 1, 1, g.RGBA, type, buf);
+              return buf;
+            } catch (e) {
+              return null;
+            }
+          };
+          var SA2 = 0x8dc1,
+            BIND_ARR = 0x8c1d,
+            DIM = typeof WeakMap === "function" ? new WeakMap() : null;
+          // Texture units the current draw samples: [{unit, arr, tex}].
+          var bound = function (g) {
+            var out = [];
+            try {
+              var prog = g.getParameter(g.CURRENT_PROGRAM);
+              if (!prog) return out;
+              var locs = PRG && PRG.get(prog);
+              if (!locs) {
+                locs = [];
+                var n = g.getProgramParameter(prog, g.ACTIVE_UNIFORMS) || 0;
+                for (var i = 0; i < n; i++) {
+                  var info = g.getActiveUniform(prog, i);
+                  if (!info || (info.type !== g.SAMPLER_2D && info.type !== SA2)) continue;
+                  var base = info.name.slice(-3) === "[0]" ? info.name.slice(0, -3) : info.name;
+                  for (var k = 0; k < info.size && k < 8; k++) {
+                    var loc = g.getUniformLocation(prog, info.size > 1 ? base + "[" + k + "]" : info.name);
+                    if (loc) locs.push({ loc: loc, arr: info.type === SA2 });
+                  }
+                }
+                if (PRG) PRG.set(prog, locs);
+              }
+              var active = g.getParameter(g.ACTIVE_TEXTURE);
+              for (var l = 0; l < locs.length; l++) {
+                var unit = g.getUniform(prog, locs[l].loc);
+                g.activeTexture(g.TEXTURE0 + unit);
+                out.push({
+                  unit: unit,
+                  arr: locs[l].arr,
+                  tex: g.getParameter(locs[l].arr ? BIND_ARR : g.TEXTURE_BINDING_2D),
+                });
+              }
+              g.activeTexture(active);
+            } catch (e) {}
+            return out;
+          };
+          var slotsOf = function (g, tex) {
+            var o = [];
+            for (var i = 0; i < TX.length; i++)
+              if (TX[i].rb && TX[i].gl === g && TX[i].tex === tex && typeof TX[i].layer === "number") o.push(TX[i]);
+            return o;
+          };
+          var depthOf = function (g, tex) {
+            var d = (DIM && DIM.get(tex)) || 0,
+              s = slotsOf(g, tex);
+            for (var i = 0; i < s.length; i++) d = Math.max(d, s[i].layer + 1);
+            return d;
+          };
+          // Private framebuffers the probes draw into, so the scene's own frame is
+          // never touched.
+          var FBS = [];
+          var offscreen = function (g, w, h) {
+            for (var i = 0; i < FBS.length; i++) if (FBS[i].g === g && FBS[i].w === w && FBS[i].h === h) return FBS[i];
+            var rb = g.createRenderbuffer(),
+              prev = g.getParameter(g.RENDERBUFFER_BINDING);
+            g.bindRenderbuffer(g.RENDERBUFFER, rb);
+            g.renderbufferStorage(g.RENDERBUFFER, g.READ_FRAMEBUFFER ? 0x8058 : g.RGBA4, w, h);
+            g.bindRenderbuffer(g.RENDERBUFFER, prev);
+            var f = { g: g, w: w, h: h, fb: g.createFramebuffer(), rb: rb, init: false };
+            if (FBS.length > 8) {
+              var old = FBS.shift();
+              try {
+                old.g.deleteFramebuffer(old.fb);
+                old.g.deleteRenderbuffer(old.rb);
+              } catch (e) {}
+            }
+            FBS.push(f);
+            return f;
+          };
+          // Draws the current call again into a private framebuffer with some texture
+          // units swapped, and reads one pixel (at, viewport-relative) or the whole
+          // frame shrunk by "down".
+          var pass = function (g, orig, args, swaps, at, down) {
+            var vp = g.getParameter(g.VIEWPORT),
+              w = Math.max(1, vp[2]),
+              h = Math.max(1, vp[3]);
+            var gl2 = !!g.READ_FRAMEBUFFER,
+              f = offscreen(g, w, h);
+            var dfb = g.getParameter(g.FRAMEBUFFER_BINDING),
+              rfb = gl2 ? g.getParameter(0x8caa) : null;
+            var sc = g.isEnabled(g.SCISSOR_TEST),
+              cc = g.getParameter(g.COLOR_CLEAR_VALUE),
+              cm = g.getParameter(g.COLOR_WRITEMASK);
+            var ppb = gl2 ? g.getParameter(g.PIXEL_PACK_BUFFER_BINDING) : null,
+              active = g.getParameter(g.ACTIVE_TEXTURE);
+            var prevTex = [],
+              out = null,
+              ow = w,
+              oh = h,
+              i;
+            try {
+              g.bindFramebuffer(g.FRAMEBUFFER, f.fb);
+              if (!f.init) {
+                g.framebufferRenderbuffer(g.FRAMEBUFFER, g.COLOR_ATTACHMENT0, g.RENDERBUFFER, f.rb);
+                f.init = true;
+              }
+              g.viewport(0, 0, w, h);
+              if (sc) g.disable(g.SCISSOR_TEST);
+              g.colorMask(true, true, true, true);
+              g.clearColor(0, 0, 0, 0);
+              g.clear(g.COLOR_BUFFER_BIT);
+              for (i = 0; i < swaps.length; i++) {
+                g.activeTexture(g.TEXTURE0 + swaps[i].unit);
+                prevTex.push(g.getParameter(swaps[i].arr ? BIND_ARR : g.TEXTURE_BINDING_2D));
+                g.bindTexture(swaps[i].arr ? g.TEXTURE_2D_ARRAY : g.TEXTURE_2D, swaps[i].tex);
+              }
+              orig.apply(g, args);
+              if (ppb) g.bindBuffer(g.PIXEL_PACK_BUFFER, null);
+              if (at) {
+                out = new Uint8Array(4);
+                g.readPixels(
+                  Math.max(0, Math.min(w - 1, at[0])),
+                  Math.max(0, Math.min(h - 1, at[1])),
+                  1,
+                  1,
+                  g.RGBA,
+                  g.UNSIGNED_BYTE,
+                  out,
+                );
+              } else {
+                if (gl2 && down > 1) {
+                  ow = Math.max(1, Math.ceil(w / down));
+                  oh = Math.max(1, Math.ceil(h / down));
+                  var sf = offscreen(g, ow, oh);
+                  g.bindFramebuffer(g.DRAW_FRAMEBUFFER, sf.fb);
+                  if (!sf.init) {
+                    g.framebufferRenderbuffer(g.DRAW_FRAMEBUFFER, g.COLOR_ATTACHMENT0, g.RENDERBUFFER, sf.rb);
+                    sf.init = true;
+                  }
+                  g.blitFramebuffer(0, 0, w, h, 0, 0, ow, oh, g.COLOR_BUFFER_BIT, g.LINEAR);
+                  g.bindFramebuffer(g.READ_FRAMEBUFFER, sf.fb);
+                }
+                out = new Uint8Array(ow * oh * 4);
+                g.readPixels(0, 0, ow, oh, g.RGBA, g.UNSIGNED_BYTE, out);
+              }
+            } catch (e) {
+              out = null;
+            }
+            try {
+              for (i = prevTex.length - 1; i >= 0; i--) {
+                g.activeTexture(g.TEXTURE0 + swaps[i].unit);
+                g.bindTexture(swaps[i].arr ? g.TEXTURE_2D_ARRAY : g.TEXTURE_2D, prevTex[i]);
+              }
+              g.activeTexture(active);
+              if (ppb) g.bindBuffer(g.PIXEL_PACK_BUFFER, ppb);
+              if (gl2) {
+                g.bindFramebuffer(g.DRAW_FRAMEBUFFER, dfb);
+                g.bindFramebuffer(g.READ_FRAMEBUFFER, rfb);
+              } else g.bindFramebuffer(g.FRAMEBUFFER, dfb);
+              g.viewport(vp[0], vp[1], vp[2], vp[3]);
+              if (sc) g.enable(g.SCISSOR_TEST);
+              g.colorMask(cm[0], cm[1], cm[2], cm[3]);
+              g.clearColor(cc[0], cc[1], cc[2], cc[3]);
+            } catch (e) {}
+            return out ? { px: out, w: ow, h: oh, vp: vp } : null;
+          };
+          // 1x1 (per layer) stand-in textures with a chosen grey per layer.
+          var PT = typeof WeakMap === "function" ? new WeakMap() : null;
+          var probeTex = function (g, arr, depth, fill, slot) {
+            if (!PT) return null;
+            var rec = PT.get(g);
+            if (!rec) {
+              rec = {};
+              PT.set(g, rec);
+            }
+            var key = (arr ? "a" : "t") + (slot || ""),
+              t = rec[key],
+              target = arr ? g.TEXTURE_2D_ARRAY : g.TEXTURE_2D;
+            var prev = g.getParameter(arr ? BIND_ARR : g.TEXTURE_BINDING_2D),
+              n = arr ? Math.max(1, depth) : 1;
+            var fresh = !t || t.d < n;
+            if (fresh) {
+              if (t) g.deleteTexture(t.tex);
+              t = rec[key] = { tex: g.createTexture(), d: n };
+            }
+            g.bindTexture(target, t.tex);
+            if (fresh) {
+              g.texParameteri(target, g.TEXTURE_MIN_FILTER, g.NEAREST);
+              g.texParameteri(target, g.TEXTURE_MAG_FILTER, g.NEAREST);
+              if (arr) g.texStorage3D(target, 1, 0x8058, 1, 1, t.d);
+            }
+            var data = new Uint8Array(4 * t.d);
+            for (var i = 0; i < t.d; i++) {
+              var v = fill(i);
+              data[i * 4] = v;
+              data[i * 4 + 1] = v;
+              data[i * 4 + 2] = v;
+              data[i * 4 + 3] = 255;
+            }
+            withUnpack(g, function () {
+              if (arr) raw(g, "texSubImage3D").call(g, target, 0, 0, 0, 0, 1, 1, t.d, g.RGBA, g.UNSIGNED_BYTE, data);
+              else raw(g, "texImage2D").call(g, target, 0, g.RGBA, 1, 1, 0, g.RGBA, g.UNSIGNED_BYTE, data);
+            });
+            g.bindTexture(target, prev);
+            return t.tex;
+          };
+          // Which layer of a texture array the draw shows at the probed pixel: redraw
+          // it once with every layer white, then once per bit of the layer index.
+          var layerAt = function (g, orig, args, b, at) {
+            var slots = slotsOf(g, b.tex);
+            if (!slots.length) return null;
+            var depth = depthOf(g, b.tex);
+            var white = pass(
+              g,
+              orig,
+              args,
+              [
+                {
+                  unit: b.unit,
+                  arr: true,
+                  tex: probeTex(g, true, depth, function () {
+                    return 255;
+                  }),
+                },
+              ],
+              at,
+              1,
+            );
+            if (!white || white.px[0] < 12) return null;
+            var ref = white.px[0],
+              layer = 0;
+            for (var bit = 0; 1 << bit < depth; bit++) {
+              var mask = 1 << bit;
+              var r = pass(
+                g,
+                orig,
+                args,
+                [
+                  {
+                    unit: b.unit,
+                    arr: true,
+                    tex: probeTex(g, true, depth, function (i) {
+                      return i & mask ? 255 : 0;
+                    }),
+                  },
+                ],
+                at,
+                1,
+              );
+              if (!r) return null;
+              if (r.px[0] * 2 > ref) layer |= mask;
+            }
+            for (var s = 0; s < slots.length; s++) if (slots[s].layer === layer) return slots[s];
+            return null;
+          };
+          // Render targets: which texture each framebuffer draws into, and which
+          // media picture was last rendered into that texture. Particle/transition
+          // scenes (obsidian /places) draw each photo into an offscreen texture once
+          // and blend those on screen, so the on-screen draw never samples the photo.
+          var FBA = typeof WeakMap === "function" ? new WeakMap() : null,
+            DER = typeof WeakMap === "function" ? new WeakMap() : null;
+          var mediaOf = function (g, tex) {
+            if (!tex) return null;
+            for (var j = 0; j < TX.length; j++) if (TX[j].gl === g && TX[j].tex === tex && !TX[j].rb) return TX[j].el;
+            var d = DER && DER.get(tex);
+            return d && d.g === g ? d.el : null;
+          };
+          var noteTarget = function (g) {
+            if (!FBA || !TX.length) return;
+            var fb = g.getParameter(g.FRAMEBUFFER_BINDING),
+              att = fb && FBA.get(fb);
+            if (!att) return;
+            var now = performance.now(),
+              d = DER.get(att);
+            if (d && now - d.t < 120) return;
+            var bs = bound(g),
+              el = null,
+              i;
+            for (i = 0; i < bs.length && !el; i++)
+              if (!bs[i].arr && bs[i].tex !== att) {
+                for (var j = 0; j < TX.length; j++)
+                  if (TX[j].gl === g && TX[j].tex === bs[i].tex && !TX[j].rb) {
+                    el = TX[j].el;
+                    break;
+                  }
+              }
+            for (i = 0; i < bs.length && !el; i++) if (!bs[i].arr && bs[i].tex !== att) el = mediaOf(g, bs[i].tex);
+            if (!el) {
+              if (d) d.t = now;
+              return;
+            }
+            var vp = g.getParameter(g.VIEWPORT);
+            if (!d || d.el !== el) {
+              d = { g: g, el: el, v: 0 };
+              DER.set(att, d);
+              DERN++;
+            }
+            d.t = now;
+            d.v++;
+            d.hl = marked(el);
+            d.w = vp[2];
+            d.h = vp[3];
+          };
+          // A highlighted picture that reaches the screen only through a render
+          // target: screen draws sample a tinted copy of that target instead.
+          var DTC = typeof WeakMap === "function" ? new WeakMap() : null,
+            DERN = 0;
+          var readTarget = function (g, tex, w, h) {
+            if (!g.READ_FRAMEBUFFER || !w || !h) return null;
+            var prev = g.getParameter(g.READ_FRAMEBUFFER_BINDING),
+              ppb = g.getParameter(g.PIXEL_PACK_BUFFER_BINDING),
+              fb = g.createFramebuffer(),
+              out = null;
+            try {
+              g.bindFramebuffer(g.READ_FRAMEBUFFER, fb);
+              raw(g, "framebufferTexture2D").call(g, g.READ_FRAMEBUFFER, g.COLOR_ATTACHMENT0, g.TEXTURE_2D, tex, 0);
+              if (g.checkFramebufferStatus(g.READ_FRAMEBUFFER) === g.FRAMEBUFFER_COMPLETE) {
+                if (ppb) g.bindBuffer(g.PIXEL_PACK_BUFFER, null);
+                var t = g.getParameter(g.IMPLEMENTATION_COLOR_READ_TYPE),
+                  n = w * h * 4;
+                if (t === g.FLOAT || t === g.HALF_FLOAT) {
+                  var f = new Float32Array(n);
+                  g.readPixels(0, 0, w, h, g.RGBA, g.FLOAT, f);
+                  out = new Uint8Array(n);
+                  for (var i = 0; i < n; i++) out[i] = Math.max(0, Math.min(255, f[i] * 255));
+                } else {
+                  out = new Uint8Array(n);
+                  g.readPixels(0, 0, w, h, g.RGBA, g.UNSIGNED_BYTE, out);
+                }
+              }
+            } catch (e) {
+              out = null;
+            }
+            try {
+              if (ppb) g.bindBuffer(g.PIXEL_PACK_BUFFER, ppb);
+              g.bindFramebuffer(g.READ_FRAMEBUFFER, prev);
+              g.deleteFramebuffer(fb);
+            } catch (e) {}
+            return out;
+          };
+          var tintedTarget = function (g, att, d) {
+            var c = DTC.get(att),
+              now = performance.now();
+            if (c && c.d === d && (c.v === d.v || now - c.t < 250)) return c.tex;
+            var px = readTarget(g, att, d.w, d.h);
+            if (!px) return c ? c.tex : null;
+            var tex = c ? c.tex : g.createTexture(),
+              prev = g.getParameter(g.TEXTURE_BINDING_2D),
+              data = tintPixels(px, d.w, d.h);
+            g.bindTexture(g.TEXTURE_2D, tex);
+            if (!c) {
+              g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MIN_FILTER, g.LINEAR);
+              g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MAG_FILTER, g.LINEAR);
+              g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_S, g.CLAMP_TO_EDGE);
+              g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_T, g.CLAMP_TO_EDGE);
+            }
+            withUnpack(g, function () {
+              raw(g, "texImage2D").call(g, g.TEXTURE_2D, 0, g.RGBA, d.w, d.h, 0, g.RGBA, g.UNSIGNED_BYTE, data);
+            });
+            g.bindTexture(g.TEXTURE_2D, prev);
+            DTC.set(att, { tex: tex, v: d.v, d: d, t: now });
+            return tex;
+          };
+          var derivedSwaps = function (g) {
+            var bs = bound(g),
+              out = [];
+            for (var i = 0; i < bs.length; i++) {
+              if (bs[i].arr) continue;
+              var d = DER.get(bs[i].tex);
+              if (!d || d.g !== g || d.hl || !marked(d.el)) continue;
+              var t = tintedTarget(g, bs[i].tex, d);
+              if (t) out.push({ unit: bs[i].unit, tex: t });
+            }
+            return out;
+          };
+          var drawTinted = function (g, orig, args, sw) {
+            var active = g.getParameter(g.ACTIVE_TEXTURE),
+              prev = [],
+              i,
+              r;
+            for (i = 0; i < sw.length; i++) {
+              g.activeTexture(g.TEXTURE0 + sw[i].unit);
+              prev.push(g.getParameter(g.TEXTURE_BINDING_2D));
+              g.bindTexture(g.TEXTURE_2D, sw[i].tex);
+            }
+            g.activeTexture(active);
+            try {
+              r = orig.apply(g, args);
+            } finally {
+              for (i = sw.length - 1; i >= 0; i--) {
+                g.activeTexture(g.TEXTURE0 + sw[i].unit);
+                g.bindTexture(g.TEXTURE_2D, prev[i]);
+              }
+              g.activeTexture(active);
+            }
+            return r;
+          };
+          var boundMedia = function (g, orig, args) {
+            var bs = bound(g),
+              cands = [];
+            for (var i = 0; i < bs.length; i++) {
+              if (bs[i].arr) {
+                var at = probeAt(g),
+                  vp = g.getParameter(g.VIEWPORT);
+                var s = at && layerAt(g, orig, args, bs[i], [at[0] - vp[0], at[1] - vp[1]]);
+                if (s) return s.el;
+                continue;
+              }
+              var el = mediaOf(g, bs[i].tex);
+              if (el) cands.push({ b: bs[i], el: el });
+            }
+            if (cands.length < 2) return cands.length ? cands[0].el : null;
+            // Several pictures are bound (a weighted blend of render targets): the
+            // one that colours the probed pixel is the one whose swap to black vs
+            // white changes it most.
+            var p = probeAt(g),
+              v = g.getParameter(g.VIEWPORT),
+              best = null,
+              bd = -1;
+            if (!p) return cands[0].el;
+            var rel = [p[0] - v[0], p[1] - v[1]];
+            for (var c = 0; c < cands.length; c++) {
+              var sw = function (val) {
+                return [
+                  {
+                    unit: cands[c].b.unit,
+                    arr: false,
+                    tex: probeTex(g, false, 1, function () {
+                      return val;
+                    }),
+                  },
+                ];
+              };
+              var w = pass(g, orig, args, sw(255), rel, 1),
+                k = pass(g, orig, args, sw(0), rel, 1);
+              if (!w || !k) continue;
+              var diff = Math.abs(w.px[0] - k.px[0]) + Math.abs(w.px[1] - k.px[1]) + Math.abs(w.px[2] - k.px[2]);
+              if (diff > bd) {
+                bd = diff;
+                best = cands[c].el;
+              }
+            }
+            return bd > 0 ? best : cands[0].el;
+          };
+          var probeDraw = function (g, orig, args) {
+            var before = readAt(g),
+              result = orig.apply(g, args),
+              after = readAt(g);
+            if (
+              before &&
+              after &&
+              (before[0] !== after[0] || before[1] !== after[1] || before[2] !== after[2] || before[3] !== after[3])
+            ) {
+              var hit = null;
+              try {
+                hit = boundMedia(g, orig, args);
+              } catch (e) {}
+              PR.hits.push(hit);
+            }
+            return result;
+          };
+          // Frame tracking (window.__scTexTrack): while an item is highlighted, the
+          // draw that samples it is redrawn a few times a second with only that
+          // picture white, and the patch nearest the last one is reported as a page
+          // rect, so the selection frame follows a moving card.
+          var TRK = null;
+          window.__scTexTrack = function (test, cb, x, y) {
+            TRK =
+              test && cb
+                ? {
+                    test: test,
+                    cb: cb,
+                    x: typeof x === "number" ? x : null,
+                    y: typeof y === "number" ? y : null,
+                    last: 0,
+                    miss: 0,
+                  }
+                : null;
+          };
+          var cssRect = function (c, R, x0, y0, x1, y1) {
+            var cw = c.width || 1,
+              ch = c.height || 1;
+            return {
+              left: R.left + (x0 / cw) * R.width,
+              top: R.top + (1 - y1 / ch) * R.height,
+              width: ((x1 - x0) / cw) * R.width,
+              height: ((y1 - y0) / ch) * R.height,
+            };
+          };
+          var patch = function (r, c, hx, hy) {
+            var w = r.w,
+              h = r.h,
+              px = r.px,
+              i,
+              best = -1,
+              bd = Infinity;
+            for (i = 0; i < w * h; i++) {
+              if (px[i * 4] < 10) continue;
+              if (hx === null) {
+                best = i;
+                break;
+              }
+              var dx = (i % w) - hx,
+                dy = Math.floor(i / w) - hy,
+                d = dx * dx + dy * dy;
+              if (d < bd) {
+                bd = d;
+                best = i;
+              }
+            }
+            if (best < 0) return null;
+            var seen = new Uint8Array(w * h),
+              q = new Int32Array(w * h),
+              qh = 0,
+              qt = 0,
+              x0 = w,
+              y0 = h,
+              x1 = 0,
+              y1 = 0;
+            q[qt++] = best;
+            seen[best] = 1;
+            while (qh < qt) {
+              var p = q[qh++],
+                x = p % w,
+                y = (p - x) / w;
+              if (x < x0) x0 = x;
+              if (x > x1) x1 = x;
+              if (y < y0) y0 = y;
+              if (y > y1) y1 = y;
+              var nb = [x > 0 ? p - 1 : -1, x < w - 1 ? p + 1 : -1, y > 0 ? p - w : -1, y < h - 1 ? p + w : -1];
+              for (var k = 0; k < 4; k++) {
+                var o = nb[k];
+                if (o < 0 || seen[o]) continue;
+                seen[o] = 1;
+                if (px[o * 4] >= 10) q[qt++] = o;
+              }
+            }
+            return [x0, y0, x1 + 1, y1 + 1];
+          };
+          var trackDraw = function (g, orig, args) {
+            var now = performance.now();
+            if (now - TRK.last < 90) return;
+            var c = g.canvas;
+            if (!c || !c.getBoundingClientRect || !c.isConnected || g.getParameter(g.FRAMEBUFFER_BINDING)) return;
+            var bs = bound(g),
+              swaps = [];
+            for (var i = 0; i < bs.length; i++) {
+              var b = bs[i];
+              if (b.arr) {
+                var slots = slotsOf(g, b.tex),
+                  on = {},
+                  any = false;
+                for (var s = 0; s < slots.length; s++)
+                  if (TRK.test(slots[s].el)) {
+                    on[slots[s].layer] = 1;
+                    any = true;
+                  }
+                if (any)
+                  swaps.push({
+                    unit: b.unit,
+                    arr: true,
+                    tex: probeTex(g, true, depthOf(g, b.tex), function (l) {
+                      return on[l] ? 255 : 0;
+                    }),
+                  });
+                continue;
+              }
+              var me = mediaOf(g, b.tex);
+              if (me && TRK.test(me))
+                swaps.push({
+                  unit: b.unit,
+                  arr: false,
+                  tex: probeTex(g, false, 1, function () {
+                    return 255;
+                  }),
+                });
+            }
+            if (!swaps.length) return;
+            // Other units go black, so a blend of render targets shows only the
+            // picked one.
+            if (DERN)
+              for (i = 0; i < bs.length; i++) {
+                if (bs[i].arr) continue;
+                var on = false;
+                for (var q = 0; q < swaps.length; q++) if (swaps[q].unit === bs[i].unit) on = true;
+                if (!on && DER.get(bs[i].tex))
+                  swaps.push({
+                    unit: bs[i].unit,
+                    arr: false,
+                    tex: probeTex(
+                      g,
+                      false,
+                      1,
+                      function () {
+                        return 0;
+                      },
+                      "k",
+                    ),
+                  });
+              }
+            TRK.last = now;
+            var down = 4,
+              r = pass(g, orig, args, swaps, null, down);
+            if (!r) return;
+            var R = c.getBoundingClientRect(),
+              vp = r.vp,
+              sx = vp[2] / r.w,
+              sy = vp[3] / r.h,
+              hx = null,
+              hy = null;
+            if (TRK.x !== null) {
+              hx = Math.round((((TRK.x - R.left) / R.width) * c.width - vp[0]) / sx);
+              hy = Math.round(((1 - (TRK.y - R.top) / R.height) * c.height - vp[1]) / sy);
+            }
+            var box = patch(r, c, hx, hy);
+            if (!box) {
+              if (++TRK.miss >= 3) TRK.cb(null);
+              return;
+            }
+            TRK.miss = 0;
+            var rect = cssRect(
+              c,
+              R,
+              vp[0] + box[0] * sx,
+              vp[1] + box[1] * sy,
+              vp[0] + box[2] * sx,
+              vp[1] + box[3] * sy,
+            );
+            TRK.x = rect.left + rect.width / 2;
+            TRK.y = rect.top + rect.height / 2;
+            TRK.cb(rect);
+          };
+          window.__scTexProbe = function (canvas, x, y, done) {
+            var token = ++PR.token,
+              frames = 0;
+            PR.canvas = canvas;
+            PR.rect = canvas.getBoundingClientRect();
+            PR.x = x;
+            PR.y = y;
+            PR.hits = [];
+            if (PR.rect.width < 1 || PR.rect.height < 1) {
+              PR.canvas = null;
+              done(null);
+              return;
+            }
+            var step = function () {
+              if (PR.token !== token) return;
+              frames++;
+              var win = null;
+              for (var i = 0; i < PR.hits.length; i++) if (PR.hits[i]) win = PR.hits[i];
+              if ((win && frames >= 2) || frames >= 6) {
+                PR.canvas = null;
+                done(win);
+                return;
+              }
+              requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+          };
+          var upload = function (entry, on) {
+            var g = entry.gl,
+              sub = g && raw(g, "texSubImage2D");
+            if (!sub || !entry.tex || (g.isContextLost && g.isContextLost())) return false;
+            var src = on ? tinted(entry.el) : entry.el;
+            if (!src) return false;
+            var prev = g.getParameter(g.TEXTURE_BINDING_2D),
+              pf = g.getParameter(g.UNPACK_FLIP_Y_WEBGL),
+              pp = g.getParameter(g.UNPACK_PREMULTIPLY_ALPHA_WEBGL);
+            var ok = true;
+            try {
+              g.bindTexture(g.TEXTURE_2D, entry.tex);
+              g.pixelStorei(g.UNPACK_FLIP_Y_WEBGL, entry.flip);
+              g.pixelStorei(g.UNPACK_PREMULTIPLY_ALPHA_WEBGL, entry.premul);
+              sub.call(g, g.TEXTURE_2D, 0, 0, 0, entry.fmt, entry.type, src);
+              if (MIP && MIP.has(entry.tex)) g.generateMipmap(g.TEXTURE_2D);
+            } catch (e) {
+              ok = false;
+            }
+            try {
+              g.pixelStorei(g.UNPACK_FLIP_Y_WEBGL, pf);
+              g.pixelStorei(g.UNPACK_PREMULTIPLY_ALPHA_WEBGL, pp);
+              g.bindTexture(g.TEXTURE_2D, prev);
+            } catch (e) {}
+            return ok;
+          };
+          // test(el) says whether a media element is the picked item; null clears.
+          // Returns how many recorded textures now carry the tint.
+          window.__scTexMark = function (test) {
+            var old = HL.els,
+              n = 0,
+              i;
+            HL.test = test || null;
+            HL.els = [];
+            HL.seen = typeof WeakMap === "function" ? new WeakMap() : null;
+            for (i = 0; i < TX.length; i++)
+              if (test && HL.els.indexOf(TX[i].el) < 0 && test(TX[i].el)) HL.els.push(TX[i].el);
+            for (i = 0; i < TX.length; i++) {
+              var on = HL.els.indexOf(TX[i].el) >= 0;
+              if (TX[i].rb) {
+                if (on) {
+                  if (slotUpload(TX[i], true)) n++;
+                } else if (TX[i].orig) slotUpload(TX[i], false);
+                continue;
+              }
+              // 2D scenes repaint every frame and pick the tint up on their own.
+              if (on) {
+                if (TX[i].d2 || upload(TX[i], true)) n++;
+              } else if (old.indexOf(TX[i].el) >= 0 && !TX[i].d2) upload(TX[i], false);
+            }
+            return n;
+          };
+          var marked = function (el) {
+            if (!HL.test) return false;
+            if (HL.els.indexOf(el) >= 0) return true;
+            if (!HL.seen) return false;
+            var hit = HL.seen.get(el);
+            if (hit === undefined) {
+              hit = !!HL.test(el);
+              HL.seen.set(el, hit);
+            }
+            return hit;
+          };
+          [window.WebGLRenderingContext, window.WebGL2RenderingContext].forEach(function (ctx) {
+            if (!ctx) return;
+            ["texImage3D", "texSubImage3D"].forEach(function (fn) {
+              var proto = ctx.prototype,
+                orig = proto[fn];
+              if (!orig) return;
+              RAW.push([proto, fn, orig]);
+              proto[fn] = function () {
+                var a = arguments,
+                  r = orig.apply(this, a);
+                try {
+                  var v = a[a.length - 1],
+                    el = srcEl(v);
+                  if (el && a[0] === this.TEXTURE_2D_ARRAY && a[1] === 0) {
+                    var tex = this.getParameter(BIND_ARR),
+                      sub = fn === "texSubImage3D";
+                    // texSubImage3D: one picture per layer (cosmos.so's card atlas).
+                    if (sub && a[7] === 1 && a[2] === 0 && a[3] === 0) slotEntry(this, tex, a[4], el, a[5], a[6]);
+                    else if (!sub && a[5] === 1) slotEntry(this, tex, 0, el, a[3], a[4]);
+                  }
+                } catch (e) {}
+                return r;
+              };
+            });
+            var ts3 = ctx.prototype.texStorage3D;
+            if (ts3 && DIM)
+              ctx.prototype.texStorage3D = function (target) {
+                var r = ts3.apply(this, arguments);
+                try {
+                  if (target === this.TEXTURE_2D_ARRAY) {
+                    var t = this.getParameter(BIND_ARR);
+                    if (t) DIM.set(t, arguments[5]);
+                  }
+                } catch (e) {}
+                return r;
+              };
+            ["texImage2D", "texSubImage2D"].forEach(function (fn) {
+              var proto = ctx.prototype,
+                orig = proto[fn];
+              if (!orig) return;
+              RAW.push([proto, fn, orig]);
+              proto[fn] = function () {
+                var last = arguments[arguments.length - 1];
+                if (isBitmap(last) && arguments[0] === this.TEXTURE_2D && arguments[1] === 0) {
+                  var be = srcEl(last);
+                  if (be && (fn === "texImage2D" || (arguments[2] === 0 && arguments[3] === 0)))
+                    try {
+                      slotEntry(this, this.getParameter(this.TEXTURE_BINDING_2D), null, be, last.width, last.height);
+                    } catch (e) {}
+                  return orig.apply(this, arguments);
+                }
+                for (var i = 0; i < arguments.length; i++) {
+                  var v = arguments[i];
+                  if (v && (v.tagName === "VIDEO" || v.tagName === "IMG")) {
+                    note(this, v, arguments, i, fn);
+                    if (HL.test && marked(v)) {
+                      var t = tinted(v);
+                      if (t) {
+                        var b = [].slice.call(arguments);
+                        b[i] = t;
+                        try {
+                          return orig.apply(this, b);
+                        } catch (e) {}
+                      }
+                    }
+                    break;
+                  }
+                }
+                return orig.apply(this, arguments);
+              };
+            });
+            var fbt = ctx.prototype.framebufferTexture2D;
+            if (fbt && FBA) {
+              RAW.push([ctx.prototype, "framebufferTexture2D", fbt]);
+              ctx.prototype.framebufferTexture2D = function (target, attachment, textarget, tex) {
+                try {
+                  if (attachment === this.COLOR_ATTACHMENT0 && textarget === this.TEXTURE_2D) {
+                    var fb = this.getParameter(target === 0x8ca8 ? 0x8caa : this.FRAMEBUFFER_BINDING);
+                    if (fb) {
+                      if (tex) FBA.set(fb, tex);
+                      else FBA.delete(fb);
+                    }
+                  }
+                } catch (e) {}
+                return fbt.apply(this, arguments);
+              };
+            }
+            ["drawArrays", "drawElements", "drawArraysInstanced", "drawElementsInstanced", "drawRangeElements"].forEach(
+              function (fn) {
+                var proto = ctx.prototype,
+                  orig = proto[fn];
+                if (!orig) return;
+                proto[fn] = function () {
+                  if (TX.length && FBA)
+                    try {
+                      if (this.getParameter(this.FRAMEBUFFER_BINDING)) noteTarget(this);
+                    } catch (e) {}
+                  if (PR.canvas && PR.canvas === this.canvas) return probeDraw(this, orig, arguments);
+                  var sw = null;
+                  if (HL.test && DERN)
+                    try {
+                      if (!this.getParameter(this.FRAMEBUFFER_BINDING)) {
+                        sw = derivedSwaps(this);
+                        if (!sw.length) sw = null;
+                      }
+                    } catch (e) {
+                      sw = null;
+                    }
+                  if (TRK && this.canvas && this.canvas.getBoundingClientRect) {
+                    var r = sw ? drawTinted(this, orig, arguments, sw) : orig.apply(this, arguments);
+                    try {
+                      trackDraw(this, orig, arguments);
+                    } catch (e) {}
+                    return r;
+                  }
+                  return sw ? drawTinted(this, orig, arguments, sw) : orig.apply(this, arguments);
+                };
+              },
+            );
+            var gm = ctx.prototype.generateMipmap;
+            if (gm && MIP)
+              ctx.prototype.generateMipmap = function (target) {
+                try {
+                  if (target === this.TEXTURE_2D) {
+                    var t = this.getParameter(this.TEXTURE_BINDING_2D);
+                    if (t) MIP.add(t);
+                  } else if (target === this.TEXTURE_2D_ARRAY) {
+                    var ta = this.getParameter(BIND_ARR);
+                    if (ta) MIP.add(ta);
+                  }
+                } catch (e) {}
+                return gm.apply(this, arguments);
+              };
+          });
+          // 2D scenes: tint the rectangle a highlighted picture is drawn into.
+          var C2 = window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype,
+            di = C2 && C2.drawImage;
+          if (di)
+            C2.drawImage = function (el) {
+              var r = di.apply(this, arguments);
+              var media = el && (el.tagName === "IMG" || el.tagName === "VIDEO");
+              if (media && PR.canvas && PR.canvas === this.canvas) {
+                try {
+                  var q = arguments,
+                    m = q.length,
+                    c = this.canvas,
+                    R = PR.rect;
+                  var qx = m >= 9 ? q[5] : q[1],
+                    qy = m >= 9 ? q[6] : q[2];
+                  var qw = m >= 9 ? q[7] : m >= 5 ? q[3] : el.videoWidth || el.naturalWidth || el.width,
+                    qh = m >= 9 ? q[8] : m >= 5 ? q[4] : el.videoHeight || el.naturalHeight || el.height;
+                  var inv = this.getTransform().inverse();
+                  var cx = ((PR.x - R.left) / R.width) * c.width,
+                    cy = ((PR.y - R.top) / R.height) * c.height;
+                  var lx = inv.a * cx + inv.c * cy + inv.e,
+                    ly = inv.b * cx + inv.d * cy + inv.f;
+                  if (
+                    lx >= Math.min(qx, qx + qw) &&
+                    lx <= Math.max(qx, qx + qw) &&
+                    ly >= Math.min(qy, qy + qh) &&
+                    ly <= Math.max(qy, qy + qh)
+                  )
+                    PR.hits.push(el);
+                } catch (e) {}
+              }
+              if (media && this.canvas && this.canvas.isConnected) {
+                var known = false;
+                for (var k = 0; k < TX.length; k++)
+                  if (TX[k].canvas === this.canvas && TX[k].el === el) {
+                    known = true;
+                    break;
+                  }
+                if (!known && TX.length < 300) TX.push({ canvas: this.canvas, el: el, d2: true });
+              }
+              if (HL.test && media && marked(el)) {
+                var a = arguments,
+                  n = a.length,
+                  dx = n >= 9 ? a[5] : a[1],
+                  dy = n >= 9 ? a[6] : a[2];
+                var dw = n >= 9 ? a[7] : n >= 5 ? a[3] : el.videoWidth || el.naturalWidth || el.width,
+                  dh = n >= 9 ? a[8] : n >= 5 ? a[4] : el.videoHeight || el.naturalHeight || el.height;
+                try {
+                  this.save();
+                  this.globalAlpha = 1;
+                  this.globalCompositeOperation = "source-over";
+                  this.fillStyle = "rgba(13,153,255,0.42)";
+                  this.fillRect(dx, dy, dw, dh);
+                  this.lineWidth = Math.max(3, Math.min(Math.abs(dw), Math.abs(dh)) * 0.03);
+                  this.strokeStyle = "#0d99ff";
+                  this.strokeRect(dx, dy, dw, dh);
+                  this.restore();
+                } catch (e) {}
+              }
+              return r;
+            };
+        }
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/gif" href="assets/images/67855313-favicon.gif" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#242424" />
+    <link rel="preconnect" href="https://fonts.googleapis.com/" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <!--
+            Per-route metadata (title, description, canonical, OpenGraph, Twitter card) is rendered
+            by the <SEO> component on each page (see src/components/common/SEO/SEO.tsx).
+            React 19 hoists <title> into <head> and deduplicates it, but `<meta>` and `<link>` are
+            APPENDED rather than replaced — so we keep only invariant structural tags here and let
+            React own everything that varies per-route. Non-JS social-preview crawlers
+            (LinkedIn/Slack/iMessage) will see no per-page tags until build-time prerendering
+            ships (Phase 1b); this is the documented trade-off.
+        -->
+    <title>Award-winning interactive production studio | Studio Dialect</title>
+    <meta property="og:image:width" content="https://studiodialect.com/1200" />
+    <meta property="og:image:height" content="https://studiodialect.com/630" />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/hero.css" />
+    <link rel="stylesheet" href="css/footer.css" />
+    <link rel="stylesheet" href="css/hero-2.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/hero-3.css" />
+    <link rel="stylesheet" href="css/footer-2.css" />
+    <script src="js/main.js" defer></script>
+    <script type="module" src="js/main.mjs"></script>
+
+    <meta
+      name="description"
+      content="Studio Dialect is an interactive production studio intersecting culture and technology. Immersive 3D, WebGL, retail, and emerging-tech work for global brands."
+    />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta
+      name="keywords"
+      content="interactive production studio, WebGL agency, 3D production, immersive retail, anamorphic billboard, emerging technology, experiential design, creative technology"
+    />
+    <meta property="og:title" content="Award-winning interactive production studio | Studio Dialect" />
+    <meta
+      property="og:description"
+      content="Studio Dialect is an interactive production studio intersecting culture and technology. Immersive 3D, WebGL, retail, and emerging-tech work for global brands."
+    />
+    <meta property="og:url" content="https://studiodialect.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Studio Dialect" />
+    <meta
+      property="og:image"
+      content="https://cdn.sanity.io/images/z4rfkkmu/production/b8e40f674150cdb8b89a35bb3cc8150a8b60dead-1200x630.png?w=1200&h=630&fit=crop&auto=format&q=80"
+    />
+    <meta
+      property="og:image:alt"
+      content="https://studiodialect.com/3D%20render%20of%20Studio%20Dialect's%20futuristic%20robotic%20arm%20brand%20mascot"
+    />
+    <meta property="og:image:width" content="https://studiodialect.com/1200" />
+    <meta property="og:image:height" content="https://studiodialect.com/630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Award-winning interactive production studio | Studio Dialect" />
+    <meta
+      name="twitter:description"
+      content="Studio Dialect is an interactive production studio intersecting culture and technology. Immersive 3D, WebGL, retail, and emerging-tech work for global brands."
+    />
+    <meta
+      name="twitter:image"
+      content="https://cdn.sanity.io/images/z4rfkkmu/production/b8e40f674150cdb8b89a35bb3cc8150a8b60dead-1200x630.png?w=1200&h=630&fit=crop&auto=format&q=80"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="https://studiodialect.com/3D%20render%20of%20Studio%20Dialect's%20futuristic%20robotic%20arm%20brand%20mascot"
+    />
+    <meta name="twitter:site" content="@studio_dialect" />
+    <meta name="twitter:creator" content="@studio_dialect" />
+    <link rel="canonical" href="https://studiodialect.com/" />
+    <script type="application/ld+json">
+      [
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://studiodialect.com/#organization",
+          "name": "Studio Dialect",
+          "alternateName": "Studio Dialect",
+          "url": "https://studiodialect.com/",
+          "logo": "https://cdn.sanity.io/images/z4rfkkmu/production/b3b95f60408a1ede2b66b37ac84b4d7787298055-695x81.svg",
+          "description": "Studio Dialect is an interactive production studio intersecting culture and technology. We specialise in interactive, immersive retail, 3D, WebGL, anamorphic billboards, and emerging-tech brand work for global clients.",
+          "slogan": "Interactive production studio intersecting culture and technology",
+          "foundingDate": "2021",
+          "address": { "@type": "PostalAddress", "streetAddress": "73 Tib Street, Manchester, M4 1LS" },
+          "sameAs": ["https://www.instagram.com/studio_dialect", "https://www.linkedin.com/company/studio-dialect"]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": "https://studiodialect.com/#website",
+          "url": "https://studiodialect.com/",
+          "name": "Studio Dialect",
+          "description": "Studio Dialect is an interactive production studio intersecting culture and technology. We specialise in interactive, immersive retail, 3D, WebGL, anamorphic billboards, and emerging-tech brand work for global clients.",
+          "publisher": { "@id": "https://studiodialect.com/#organization" },
+          "inLanguage": "en"
+        }
+      ]
+    </script>
+  </head>
+  <body>
+    <div id="cookie-banner" class="cookie-banner">
+      <div class="cookie-banner__text">We use cookies to enhance your experience and analyze site traffic.</div>
+      <div class="cookie-banner__buttons">
+        <button class="cookie-banner__btn cookie-banner__btn--accept" onclick="acceptCookies()">accept</button>
+        <button class="cookie-banner__btn cookie-banner__btn--decline" onclick="declineCookies()">decline</button>
+      </div>
+    </div>
+    <div id="inline-loader" class="inline-loader">
+      <div class="inline-loader__content">
+        <div>
+          <div class="inline-loader__title">
+            <div class="inline-loader__graphic">
+              <div class="inline-loader__graphic_icon icon_1"></div>
+              <div class="inline-loader__graphic_icon icon_2"></div>
+              <div class="inline-loader__graphic_icon icon_3"></div>
+            </div>
+            <img src="assets/images/1fce6d9a-loader-BYw2aNWv.gif" alt />
+          </div>
+          <div class="inline-loader__pct">
+            [ LOADING ...
+            <span id="inline-loader-pct">0</span>
+            % ]
+          </div>
+          <div class="inline-loader__bar">
+            <div id="inline-loader-progress" class="inline-loader__progress"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="root">
+      <div class="app">
+        <div class="navigation__background UI_1 navigation__menu"></div>
+        <div class="navigation__logo interactive">
+          <a
+            aria-label="Studio Dialect — home"
+            aria-current="page"
+            class="active"
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%"
+            href="https://studiodialect.com/"
+            data-discover="true"
+          ></a>
+        </div>
+        <div class="UI_1 navigation__menu">
+          <span class="navigation__mousecoords">
+            <span class="navigation__mousecoords-x">
+              X :
+              <!-- -->
+              0
+            </span>
+            <span class="navigation__mousecoords-y">
+              Y :
+              <!-- -->
+              0
+            </span>
+          </span>
+          <span class="interactive navigation__menubutton">MENU</span>
+        </div>
+        <div class="navigation__overlay">
+          <canvas id="menu-clip-canvas" class="navigation__overlay-canvas" width="10" height="10"></canvas>
+          <nav class="navigation__nav">
+            <ul class="navigation__menu-list">
+              <li class="navigation__item custom_cursor__disable-hover">
+                <a
+                  aria-current="page"
+                  class="navigation__link navigation__active"
+                  href="https://studiodialect.com/"
+                  data-discover="true"
+                >
+                  <span class="navigation__link-heading">
+                    <span class="navigation__link-text">
+                      Home
+                      <br />
+                      <span class="navigation__link__text--duplicate">Home</span>
+                    </span>
+                  </span>
+                </a>
+              </li>
+              <li class="navigation__item custom_cursor__disable-hover">
+                <a class="navigation__link" href="https://studiodialect.com/studio" data-discover="true">
+                  <span class="navigation__link-heading">
+                    <span class="navigation__link-text">
+                      Studio
+                      <br />
+                      <span class="navigation__link__text--duplicate">Studio</span>
+                    </span>
+                  </span>
+                </a>
+              </li>
+              <li class="navigation__item custom_cursor__disable-hover">
+                <a class="navigation__link" href="https://studiodialect.com/projects" data-discover="true">
+                  <span class="navigation__link-heading">
+                    <span class="navigation__link-text">
+                      Projects
+                      <br />
+                      <span class="navigation__link__text--duplicate">Projects</span>
+                    </span>
+                  </span>
+                </a>
+              </li>
+              <li class="navigation__item custom_cursor__disable-hover">
+                <a class="navigation__link" href="https://studiodialect.com/labs" data-discover="true">
+                  <span class="navigation__link-heading">
+                    <span class="navigation__link-text">
+                      Labs
+                      <br />
+                      <span class="navigation__link__text--duplicate">Labs</span>
+                    </span>
+                  </span>
+                </a>
+              </li>
+              <li class="navigation__item custom_cursor__disable-hover">
+                <a class="navigation__link" href="https://studiodialect.com/contact" data-discover="true">
+                  <span class="navigation__link-heading">
+                    <span class="navigation__link-text">
+                      Contact
+                      <br />
+                      <span class="navigation__link__text--duplicate">Contact</span>
+                    </span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <main class="main">
+          <div class="page home">
+            <div class="hero__container">
+              <section class="hero">
+                <h1 class="pixelated-title hero__title">
+                  <canvas class="pixelated-title__canvas" style="image-rendering: pixelated"></canvas>
+                  <span class="pixelated-title__text" style="opacity: 0">
+                    erere kocag gaming
+                    <br />
+                  </span>
+                  <span class="pixelated-title__text" style="opacity: 0">&#x200b;</span>
+                </h1>
+                <div class="hero__graphic">
+                  <div class="hero__graphic_icon icon_1"></div>
+                  <div class="hero__graphic_icon icon_2"></div>
+                  <div class="hero__graphic_icon icon_3"></div>
+                </div>
+                <div class="element-reveal">
+                  <div class="element-reveal-item">
+                    <p class="hero__subtitle">
+                      Award-winning motion, design and interactive experiences that connect culture, technology, and
+                      contemporary aesthetics.
+                    </p>
+                  </div>
+                </div>
+                <div class="project-spiral project-spiral--prerender-placeholder"></div>
+                <div class="hero__spiral-crosses">
+                  <div class="cross-icon cross-top-left"></div>
+                  <div class="cross-icon cross-top-right"></div>
+                  <div class="cross-icon cross-bottom-left"></div>
+                  <div class="cross-icon cross-bottom-right"></div>
+                </div>
+              </section>
+            </div>
+            <div class="pixelated-reveal-container">
+              <div class="pixelated-reveal"></div>
+              <canvas class="pixelated-reveal__canvas" width="10" height="10"></canvas>
+              <div class="pixelated-reveal__content">
+                <section class="body drop-shadow-top">
+                  <h2 class="pixelated-title home-body__title-top desktop">
+                    <canvas class="pixelated-title__canvas" style="image-rendering: pixelated"></canvas>
+                    <span class="pixelated-title__text" style="opacity: 0">
+                      erere kocag lah
+                      <br />
+                    </span>
+                    <span class="pixelated-title__text" style="opacity: 0">&#x200b;</span>
+                  </h2>
+                  <h2 class="pixelated-title home-body__title-top mobile">
+                    <canvas class="pixelated-title__canvas" style="image-rendering: pixelated"></canvas>
+                    <span class="pixelated-title__text" style="opacity: 0">
+                      erere kocag lah
+                      <br />
+                    </span>
+                    <span class="pixelated-title__text" style="opacity: 0">
+                      CULTURE &amp;
+                      <br />
+                    </span>
+                    <span class="pixelated-title__text" style="opacity: 0">TECHNOLOGY</span>
+                  </h2>
+                  <div class="home-body__main">
+                    <div class="home-body__callout-container">
+                      <div class="home-body__callout">
+                        <div class="text-reveal">
+                          <p>
+                            Studio Dialect explores how technology can shape the way people move, feel and interact.
+                          </p>
+                          <p>
+                            From websites to installations, we design experiences that sit comfortably at the edge of
+                            what’s possible, guided by a belief in thoughtful design, meaningful experiences and a love
+                            of solving hard problems.
+                          </p>
+                        </div>
+                        <div class="element-reveal">
+                          <div class="element-reveal-item">
+                            <a class="arrow-link" href="https://studiodialect.com/projects" data-discover="true">
+                              <span class="arrow-link__label">
+                                <span class="arrow-link__label-text">
+                                  ALL PROJECTS
+                                  <br />
+                                  ALL PROJECTS
+                                </span>
+                              </span>
+                              <span class="arrow-link__arrow"></span>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pixelated-image-reveal" style="--reveal-delay: 0s">
+                      <canvas class="pixelated-image-reveal__canvas" width="10" height="10"></canvas>
+                      <div class="pixelated-image-reveal__content">
+                        <div class="follow-pointer">
+                          <div class="home-body__image">
+                            <div class="video-container loading" style="--aspect-ratio: 1">
+                              <div class="pixelated-image-reveal video-container__reveal" style="--reveal-delay: 0s">
+                                <canvas class="pixelated-image-reveal__canvas" width="10" height="10"></canvas>
+                                <div class="pixelated-image-reveal__content">
+                                  <iframe
+                                    src="https://player.vimeo.com/video/1144457641?badge=0&autopause=0&autoplay=1&muted=1&playsinline=1&prefer_mms=0&controls=0&title=0&byline=0&cc=0&transcript=0&pip=0&vimeo_logo=0&background=1&player_id=0&app_id=58479&loop=1"
+                                    title="Embedded video"
+                                    frameborder="0"
+                                    webkit-playsinline="true"
+                                    allowfullscreen
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    allow="
+                                      autoplay;
+                                      allowfullscreen;
+                                      muted;
+                                      loop;
+                                      playsinline;
+                                      webkit-playsinline;
+                                      fullscreen;
+                                      picture-in-picture;
+                                    "
+                                  ></iframe>
+                                  <button
+                                    class="interactive video-container__play-fullscreen"
+                                    aria-label="Play Fullscreen Video"
+                                    style="
+                                      background-image: url(/api/public/clone-media/f7ae444b51f55a0b39be33f73014be0c.jpg) !important;
+                                    "
+                                  ></button>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="cross-icon cross-top-left"></div>
+                            <div class="cross-icon cross-top-right"></div>
+                            <div class="cross-icon cross-bottom-left"></div>
+                            <div class="cross-icon cross-bottom-right"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <h2 class="pixelated-title home-body__title-bottom desktop">
+                    <canvas class="pixelated-title__canvas" style="image-rendering: pixelated"></canvas>
+                    <span class="pixelated-title__text" style="opacity: 0">
+                      &amp;
+                      <br />
+                    </span>
+                    <span class="pixelated-title__text" style="opacity: 0">TECHNOLOGY</span>
+                  </h2>
+                </section>
+              </div>
+            </div>
+            <section class="body">
+              <div class="home-body__text">
+                <div class="text-reveal">
+                  <p>
+                    Our work is grounded in research and experimentation. We help brands make sense of emerging
+                    technologies and turn them into clear, purposeful experiences that stay with people.
+                  </p>
+                  <p>
+                    Everything we create is built in close collaboration with our clients and agency partners, working
+                    together to bring ideas to life with clarity and intention.
+                  </p>
+                </div>
+              </div>
+              <div class="home-body__capabilities">
+                <div class="pixelated-image-reveal" style="--reveal-delay: 0s">
+                  <canvas class="pixelated-image-reveal__canvas" width="10" height="10"></canvas>
+                  <div class="pixelated-image-reveal__content">
+                    <div class="home-body__image-2">
+                      <div class="glitch-transition">
+                        <video
+                          src="media/67c4fcffa6ae0ff3357f3e02b2d2b71e.mp4"
+                          class="glitch-transition__video glitch-transition__video--active"
+                          style="aspect-ratio: 1; object-fit: cover"
+                          autoplay
+                          playsinline
+                          muted
+                          loop
+                        ></video>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="element-reveal">
+                  <div class="element-reveal-item"><div class="home-body__capabilities-label">CAPABILITIES</div></div>
+                </div>
+                <div class="home-body__capabilities-list">
+                  <div class="element-reveal">
+                    <div class="element-reveal-item">
+                      <div class="home-body__capability-item">
+                        <div class="home-body__capability-spacer"></div>
+                        <span class="label">Experience Strategy &amp; Design</span>
+                        <span class="number">
+                          [
+                          <!-- -->
+                          01
+                          <!-- -->
+                          ]
+                        </span>
+                      </div>
+                    </div>
+                    <div class="element-reveal-item">
+                      <div class="home-body__capability-item">
+                        <div class="home-body__capability-spacer"></div>
+                        <span class="label">3D Visualisation</span>
+                        <span class="number">
+                          [
+                          <!-- -->
+                          02
+                          <!-- -->
+                          ]
+                        </span>
+                      </div>
+                    </div>
+                    <div class="element-reveal-item">
+                      <div class="home-body__capability-item">
+                        <div class="home-body__capability-spacer"></div>
+                        <span class="label">Rapid Concept Prototyping</span>
+                        <span class="number">
+                          [
+                          <!-- -->
+                          03
+                          <!-- -->
+                          ]
+                        </span>
+                      </div>
+                    </div>
+                    <div class="element-reveal-item">
+                      <div class="home-body__capability-item">
+                        <div class="home-body__capability-spacer"></div>
+                        <span class="label">Motion &amp; Production</span>
+                        <span class="number">
+                          [
+                          <!-- -->
+                          04
+                          <!-- -->
+                          ]
+                        </span>
+                      </div>
+                    </div>
+                    <div class="element-reveal-item">
+                      <div class="home-body__capability-item last">
+                        <div class="home-body__capability-spacer"></div>
+                        <span class="label">Website &amp; App Experience</span>
+                        <span class="number">
+                          [
+                          <!-- -->
+                          05
+                          <!-- -->
+                          ]
+                        </span>
+                      </div>
+                    </div>
+                    <div class="element-reveal-item">
+                      <a class="arrow-link" href="https://studiodialect.com/contact" data-discover="true">
+                        <span class="arrow-link__label">
+                          <span class="arrow-link__label-text">
+                            START A PROJECT
+                            <br />
+                            START A PROJECT
+                          </span>
+                        </span>
+                        <span class="arrow-link__arrow"></span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="home-body__logo-rail body">
+              <div class="element-reveal">
+                <div class="element-reveal-item">
+                  <div class="logo-rail">
+                    <div class="logo-rail__container">
+                      <div class="logo-rail__scroll">
+                        <div class="logo-rail__set">
+                          <div class="logo-rail__item">
+                            <img
+                              src="/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/e71b80433ad154de88c3ec6641b3130f0056a0bc-128x48.png?w=512&fm=webp"
+                              alt="Nespresso"
+                              class="logo-rail__logo"
+                              crossorigin="anonymous"
+                            />
+                          </div>
+                          <div class="logo-rail__item">
+                            <img
+                              src="/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/2ff8c33c3ada739df61493a26268c37899816cfa-59x48.png?w=512&fm=webp"
+                              alt="H&amp;M"
+                              class="logo-rail__logo"
+                              crossorigin="anonymous"
+                            />
+                          </div>
+                          <div class="logo-rail__item">
+                            <img
+                              src="/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/977598cc13fe510087ae1e1b575bed7b6f216e60-35x48.png?w=512&fm=webp"
+                              alt="On Running"
+                              class="logo-rail__logo"
+                              crossorigin="anonymous"
+                            />
+                          </div>
+                          <div class="logo-rail__item">
+                            <img
+                              src="/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/3ec929761952b11bff2b1a652e956dde93e33c76-140x48.png?w=512&fm=webp"
+                              alt="McLaren"
+                              class="logo-rail__logo"
+                              crossorigin="anonymous"
+                            />
+                          </div>
+                          <div class="logo-rail__item">
+                            <img
+                              src="/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/d061ace106ee1add95062ca0511b624526f979d3-72x48.png?w=512&fm=webp"
+                              alt="Intel"
+                              class="logo-rail__logo"
+                              crossorigin="anonymous"
+                            />
+                          </div>
+                          <div class="logo-rail__item">
+                            <img
+                              src="/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/2b77764ebf82e56ee0dad5709160867afa69e091-63x44.png?w=512&fm=webp"
+                              alt="Adidas"
+                              class="logo-rail__logo"
+                              crossorigin="anonymous"
+                            />
+                          </div>
+                          <div class="logo-rail__item">
+                            <img
+                              src="/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/c72d40efd611b3b6c2be7adcd4c03c6c3eefd966-97x48.png?w=512&fm=webp"
+                              alt="Google"
+                              class="logo-rail__logo"
+                              crossorigin="anonymous"
+                            />
+                          </div>
+                          <div class="logo-rail__item">
+                            <img
+                              src="/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/68198132a6a6d68e8d9177cdfcf8e9474994e1e4-79x48.png?w=512&fm=webp"
+                              alt="Hoka"
+                              class="logo-rail__logo"
+                              crossorigin="anonymous"
+                            />
+                          </div>
+                          <div class="logo-rail__item">
+                            <img
+                              src="/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/d8152dcd173e721180bcee6d9c7a8d7103eba2e1-71x48.png?w=512&fm=webp"
+                              alt="Heinemann"
+                              class="logo-rail__logo"
+                              crossorigin="anonymous"
+                            />
+                          </div>
+                          <div class="logo-rail__item">
+                            <img
+                              src="/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/3d4e5e04325a847b831726855d1e3ad4e02b91e1-103x48.png?w=512&fm=webp"
+                              alt="Fossil"
+                              class="logo-rail__logo"
+                              crossorigin="anonymous"
+                            />
+                          </div>
+                          <div class="logo-rail__item">
+                            <img
+                              src="/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/c6ce8233b01bb65d46ddbfb7f2ef6e8ffc2b9349-94x48.png?w=512&fm=webp"
+                              alt="Coca-Cola"
+                              class="logo-rail__logo"
+                              crossorigin="anonymous"
+                            />
+                          </div>
+                          <div class="logo-rail__item">
+                            <img
+                              src="/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/fb23ea2699a8310baa63b2fa68d05668a24df3ca-71x48.png?w=512&fm=webp"
+                              alt="The North Face"
+                              class="logo-rail__logo"
+                              crossorigin="anonymous"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="logo-rail__corner logo-rail__corner--left"></div>
+                      <div class="logo-rail__corner logo-rail__corner--right"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="body">
+              <div class="home-body__intersection">
+                <div class="home-body__callout-2 mobile">
+                  <h3 class="pixelated-title home-body__intersection-title">
+                    <canvas class="pixelated-title__canvas" style="image-rendering: pixelated"></canvas>
+                    <span class="pixelated-title__text" style="opacity: 0">art, technology, experience.</span>
+                  </h3>
+                  <div class="home-body__callout">
+                    <div class="text-reveal">
+                      <p>
+                        Our approach sits where creativity and technical imagination meet. We explore emerging
+                        technologies with a practical, artistic eye, shaping them into experiences that feel human and
+                        memorable.
+                      </p>
+                    </div>
+                    <div class="text-reveal">
+                      <p>
+                        Our curiosity is what keeps our work moving forward. It pushes us to stay close to new ideas,
+                        new tools and new ways of seeing. It keeps our aesthetics evolving and our technical approach
+                        sharp. It’s the energy that ensures every project feels considered and ready for the world it’s
+                        going into.
+                      </p>
+                    </div>
+                    <div class="element-reveal">
+                      <div class="element-reveal-item">
+                        <a class="arrow-link" href="https://studiodialect.com/studio" data-discover="true">
+                          <span class="arrow-link__label">
+                            <span class="arrow-link__label-text">
+                              The Studio
+                              <br />
+                              The Studio
+                            </span>
+                          </span>
+                          <span class="arrow-link__arrow"></span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="home-body__gate-icon mobile"></div>
+                <div class="home-body__world desktop">
+                  <div class="element-reveal">
+                    <div class="element-reveal-item"><div class="home-body__callout-studio">THE STUDIO</div></div>
+                  </div>
+                  <div class="element-reveal">
+                    <div class="element-reveal-item"><div class="home-body__world-icon"></div></div>
+                    <div class="element-reveal-item">
+                      <a class="arrow-link" href="https://studiodialect.com/easter-egg" data-discover="true">
+                        <span class="arrow-link__label">
+                          <span class="arrow-link__label-text">
+                            Let&#x27;s Play
+                            <br />
+                            Let&#x27;s Play
+                          </span>
+                        </span>
+                        <span class="arrow-link__arrow"></span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="pixelated-image-reveal" style="--reveal-delay: 0s">
+                  <canvas class="pixelated-image-reveal__canvas" width="10" height="10"></canvas>
+                  <div class="pixelated-image-reveal__content">
+                    <div class="follow-pointer">
+                      <div class="home-body__image home-body__image-3">
+                        <div class="video-container loading" style="--aspect-ratio: 0.5625">
+                          <div class="pixelated-image-reveal video-container__reveal" style="--reveal-delay: 0s">
+                            <canvas class="pixelated-image-reveal__canvas" width="10" height="10"></canvas>
+                            <div class="pixelated-image-reveal__content">
+                              <iframe
+                                src="https://player.vimeo.com/video/1145249700?badge=0&autopause=0&autoplay=1&muted=1&playsinline=1&prefer_mms=0&controls=0&title=0&byline=0&cc=0&transcript=0&pip=0&vimeo_logo=0&background=1&player_id=0&app_id=58479&loop=1"
+                                title="Embedded video"
+                                frameborder="0"
+                                webkit-playsinline="true"
+                                allowfullscreen
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                allow="
+                                  autoplay;
+                                  allowfullscreen;
+                                  muted;
+                                  loop;
+                                  playsinline;
+                                  webkit-playsinline;
+                                  fullscreen;
+                                  picture-in-picture;
+                                "
+                              ></iframe>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="cross-icon cross-top-left"></div>
+                        <div class="cross-icon cross-top-right"></div>
+                        <div class="cross-icon cross-bottom-left"></div>
+                        <div class="cross-icon cross-bottom-right"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="home-body__intersection-text">
+                  <div class="home-body__callout-2 desktop">
+                    <h3 class="pixelated-title home-body__intersection-title">
+                      <canvas class="pixelated-title__canvas" style="image-rendering: pixelated"></canvas>
+                      <span class="pixelated-title__text" style="opacity: 0">art, technology, experience.</span>
+                    </h3>
+                    <div class="home-body__callout">
+                      <div class="text-reveal">
+                        <p>
+                          Our approach sits where creativity and technical imagination meet. We explore emerging
+                          technologies with a practical, artistic eye, shaping them into experiences that feel human and
+                          memorable.
+                        </p>
+                        <p>
+                          Our curiosity is what keeps our work moving forward. It pushes us to stay close to new ideas,
+                          new tools and new ways of seeing. It keeps our aesthetics evolving and our technical approach
+                          sharp. It’s the energy that ensures every project feels considered and ready for the world
+                          it’s going into.
+                        </p>
+                      </div>
+                      <div class="element-reveal">
+                        <div class="element-reveal-item">
+                          <a class="arrow-link" href="https://studiodialect.com/studio" data-discover="true">
+                            <span class="arrow-link__label">
+                              <span class="arrow-link__label-text">
+                                The Studio
+                                <br />
+                                The Studio
+                              </span>
+                            </span>
+                            <span class="arrow-link__arrow"></span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="home-body__contact">
+                    <div>
+                      <div class="element-reveal">
+                        <div class="element-reveal-item"><span class="home-body__label">dialect hq</span></div>
+                        <div class="element-reveal-item"><br /></div>
+                        <div class="element-reveal-item"><span class="home-body__time">10:03</span></div>
+                        <div class="element-reveal-item"><span class="home-body__status">OPEN</span></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="element-reveal">
+                        <div class="element-reveal-item">
+                          <span>
+                            73 Tib St,
+                            <br />
+                          </span>
+                        </div>
+                        <div class="element-reveal-item">
+                          <span>
+                            Manchester,
+                            <br />
+                          </span>
+                        </div>
+                        <div class="element-reveal-item"><span>M4 1LS</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+        <footer class="footer">
+          <div>
+            <a
+              href="mailto:hello@studiodialect.com"
+              data-cursor-label="Copy Email"
+              rel="noopener noreferrer"
+              class="interactive"
+            >
+              <h2 class="pixelated-title footer__title">
+                <canvas class="pixelated-title__canvas" style="image-rendering: pixelated"></canvas>
+                <span class="pixelated-title__text" style="opacity: 0">
+                  ererer erer
+                  <br />
+                </span>
+                <span class="pixelated-title__text" style="opacity: 0">eadadawdwada</span>
+              </h2>
+            </a>
+            <div class="text-reveal no-pulse"><h4>let&#x27;s create the new &amp; next</h4></div>
+          </div>
+          <div class="footer__content">
+            <div class="footer__links">
+              <div>
+                <div class="text-reveal"><h5>FIND US</h5></div>
+                <div class="text-reveal">
+                  <div class="UI_1">
+                    <p>73 Tib St,</p>
+                    <p>Manchester,</p>
+                    <p>M4 1LS</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="text-reveal"><h5>INTERNAL</h5></div>
+                <div class="UI_1 footer__link-list">
+                  <div class="element-reveal">
+                    <div class="element-reveal-item">
+                      <p>
+                        <a aria-current="page" class="active" href="https://studiodialect.com/" data-discover="true">
+                          home
+                        </a>
+                      </p>
+                    </div>
+                    <div class="element-reveal-item">
+                      <p><a class href="https://studiodialect.com/studio" data-discover="true">about us</a></p>
+                    </div>
+                    <div class="element-reveal-item">
+                      <p><a class href="https://studiodialect.com/projects" data-discover="true">projects</a></p>
+                    </div>
+                    <div class="element-reveal-item">
+                      <p><a class href="https://studiodialect.com/research" data-discover="true">labs</a></p>
+                    </div>
+                    <div class="element-reveal-item">
+                      <p><a class href="https://studiodialect.com/contact" data-discover="true">contact</a></p>
+                    </div>
+                    <div class="element-reveal-item">
+                      <p><a class href="https://studiodialect.com/easter-egg" data-discover="true">easter egg</a></p>
+                    </div>
+                    <div class="element-reveal-item">
+                      <p><a class href="https://studiodialect.com/privacy" data-discover="true">privacy policy</a></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="text-reveal"><h5>EXTERNAL</h5></div>
+                <div class="UI_1 footer__link-list">
+                  <div class="element-reveal">
+                    <div class="element-reveal-item">
+                      <p><a href="https://www.instagram.com/studio_dialect/">Instagram</a></p>
+                    </div>
+                    <div class="element-reveal-item">
+                      <p><a href="https://www.linkedin.com/company/studio-dialect/">linkedin</a></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="giant-head giant-head--prerender-placeholder" aria-hidden="true"></div>
+          </div>
+          <div class="footer__bottom-bar">
+            <span class="dialect-logo"></span>
+            <span>© Studio Dialect 2025 all rights reserved</span>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script data-site-cloner-safety>
+      (function () {
+        // Browser-sniffing runtimes add classes such as "is-microsoft edge"; a token
+        // with a space throws in classList.add and takes the whole app down (Nuxt
+        // renders its 500 page in Edge - incredibles.dev does so on the live site
+        // too). Splitting the token keeps every class and the page alive.
+        try {
+          var tokenProto = window.DOMTokenList && DOMTokenList.prototype;
+          if (tokenProto && !tokenProto.__scSafe) {
+            tokenProto.__scSafe = true;
+            ["add", "remove"].forEach(function (name) {
+              var original = tokenProto[name];
+              tokenProto[name] = function () {
+                var list = [];
+                for (var t = 0; t < arguments.length; t++) {
+                  var parts = String(arguments[t]).split(/\s+/);
+                  for (var q = 0; q < parts.length; q++) if (parts[q]) list.push(parts[q]);
+                }
+                return original.apply(this, list.length ? list : arguments);
+              };
+            });
+          }
+        } catch (ignored) {}
+        var ran = false;
+        var liftRan = false;
+        function unhide() {
+          if (ran) return;
+          ran = true;
+          try {
+            var selectors = [".intro-bg", ".transition-panel", ".page-fade"];
+            var found = document.getElementById("intro-bg") || document.getElementById("transition-panel");
+            if (!found) {
+              for (var i = 0; i < selectors.length; i++) {
+                if (document.querySelector(selectors[i])) {
+                  found = true;
+                  break;
+                }
+              }
+            }
+            if (!found) return;
+            for (var j = 0; j < selectors.length; j++) {
+              var nodes = document.querySelectorAll(selectors[j]);
+              for (var k = 0; k < nodes.length; k++) nodes[k].style.setProperty("display", "none", "important");
+            }
+            var wrap = document.getElementById("scroll-wrap");
+            if (wrap) {
+              wrap.style.setProperty("opacity", "1");
+              wrap.style.setProperty("visibility", "visible");
+            }
+          } catch (ignored) {}
+        }
+        // Generic stuck-overlay lifter. Some sites (React/Remix, hand-rolled) cover
+        // the whole viewport with a fixed intro/curtain/splash <div> (z-index high,
+        // solid background or a <canvas>) that only their own scroll/gasp timeline
+        // removes. The clone has no such timeline, so if the overlay is still pinned
+        // over the screen long after boot it is lifted. Only position:fixed elements
+        // that block the whole viewport qualify - sticky/absolute sections (pinned
+        // cards, parallax heroes) are never touched.
+        function liftStuckOverlays() {
+          if (liftRan) return;
+          liftRan = true;
+          try {
+            var W = window.innerWidth,
+              H = window.innerHeight;
+            if (!W || !H) return;
+            if (window.__siteClonerOverlays !== undefined) return;
+            var els = document.querySelectorAll("body *");
+            var lifted = false;
+            for (var i = 0; i < els.length; i++) {
+              var el = els[i];
+              var tag = el.tagName;
+              if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT" || tag === "LINK" || tag === "META")
+                continue;
+              var cs = getComputedStyle(el);
+              if (cs.position !== "fixed") continue;
+              if (cs.visibility === "hidden" || cs.display === "none") continue;
+              if (Number(cs.opacity || 1) === 0) continue;
+              // A layer that lets pointer events through cannot block the page, so it is
+              // never the stuck overlay this guard exists to remove. WebGL "scroll rig"
+              // canvases (e.g. #ScrollRig-canvas on fromanother.love) are fixed,
+              // full-viewport, high z-index AND contain a canvas - they match every other
+              // test below, yet hiding one deletes the hero featured-video rectangle and
+              // the Featured-work centre image (both are WebGL planes, not DOM nodes).
+              if (cs.pointerEvents === "none") continue;
+              var rect = el.getBoundingClientRect();
+              if (rect.width < W * 0.9 || rect.height < H * 0.9) continue;
+              if (Math.abs(rect.top) > 2 || Math.abs(rect.left) > 2) continue;
+              var z = parseInt(cs.zIndex, 10);
+              if (!isFinite(z) || z < 20) continue;
+              var bg = cs.backgroundColor;
+              var bgOpaque = !!bg && bg !== "rgba(0, 0, 0, 0)" && bg !== "transparent";
+              var hasCanvas = !!el.querySelector("canvas");
+              var hasVisible = (el.innerText || "").trim().length > 0;
+              if (!bgOpaque && !hasCanvas && !hasVisible) continue;
+              // Persistent name/preloader layers may legitimately stay visible.
+              if (
+                el.closest(
+                  "#name-layer, .name-layer, #preloader-luke, #preloader-logo, #preloader-content, #preloader-dot",
+                )
+              )
+                continue;
+              // The intro curtain lifts itself roughly 5.5s after boot (its lottie
+              // intro, titles and fade run on their own timeline). Lifting it here
+              // would freeze the title mid animation, so skip it and let it finish.
+              if (
+                el.closest(".intro-curtain, .curtain-title, .curtain-desc") ||
+                el.querySelector(".curtain-title, .curtain-desc")
+              )
+                continue;
+              // Only lift elements that still fully cover the viewport as seen by the
+              // user (i.e. they were not animated away on their own).
+              el.style.setProperty("display", "none", "important");
+              lifted = true;
+            }
+            if (lifted) {
+              var wrap = document.getElementById("scroll-wrap");
+              if (wrap) {
+                wrap.style.setProperty("opacity", "1");
+                wrap.style.setProperty("visibility", "visible");
+              }
+              window.__siteClonerOverlays = true;
+            }
+          } catch (ignored) {}
+        }
+        window.addEventListener("error", function () {
+          setTimeout(unhide, 2000);
+          setTimeout(liftStuckOverlays, 2500);
+        });
+        window.addEventListener("unhandledrejection", function () {
+          setTimeout(unhide, 2000);
+          setTimeout(liftStuckOverlays, 2500);
+        });
+        setTimeout(function () {
+          unhide();
+          // Layout guard: animated titles are often white-space:nowrap with a huge
+          // font, so any longer replacement text blows out horizontally (broken
+          // layout). Wrap text that overflows its container so edits stay contained.
+          //
+          // The overflow test must ignore a *stacked* value though. This site pins each
+          // word of a rotating title in an inline-grid on the SAME row, so scrollWidth
+          // stays at the container width while the three stacked words add up vertically.
+          // Reading that as horizontal overflow flipped the element to white-space normal
+          // and broke COLLECTIVE onto a second line - the exact defect this guard exists
+          // to avoid. Only act when the text really does run past its box horizontally.
+          try {
+            var all = document.querySelectorAll("body *");
+            for (var i = 0; i < all.length; i++) {
+              var el = all[i];
+              var tag = el.tagName;
+              if (tag === "SCRIPT" || tag === "STYLE" || tag === "CANVAS" || tag === "SVG" || tag === "NOSCRIPT")
+                continue;
+              // Skip the hero name layer: its oversized lettering intentionally
+              // spans the whole viewport and its per-character layout is derived,
+              // so forcing wrap would scatter the letters vertically.
+              if (
+                el.closest(
+                  "#preloader-content, #preloader-logo, #preloader-luke, #preloader-baffait, #preloader-dot, #name-layer, .name-layer",
+                )
+              )
+                continue;
+              var cs = getComputedStyle(el);
+              if (cs.whiteSpace !== "nowrap" || cs.writingMode !== "horizontal-tb") continue;
+              if (cs.display === "inline-grid" || cs.display === "grid") continue;
+              if (el.scrollWidth > Math.min(el.clientWidth, window.innerWidth) + 40) {
+                el.style.whiteSpace = "normal";
+                el.style.overflowWrap = "anywhere";
+              }
+            }
+          } catch (ignored2) {}
+          // The curtain/loader overlay is given one extra beat to animate away on its
+          // own before being lifted for good.
+          setTimeout(liftStuckOverlays, 1200);
+        }, 3000);
+        // The intro curtain normally slides away ~5.5s in. If its lottie never loads
+        // the titles stay frozen at opacity 0, so force the whole curtain off at 8s.
+        setTimeout(function () {
+          try {
+            var curtain = document.querySelector(".intro-curtain, [class*='curtain'], .curtain-title, .curtain-desc");
+            var holder = curtain ? curtain.closest("div, main, section") || curtain : null;
+            if (!holder) return;
+            var cs = getComputedStyle(holder);
+            var rect = holder.getBoundingClientRect();
+            if (cs.display === "none" || cs.visibility === "hidden" || Number(cs.opacity || 1) === 0) return;
+            if (rect.width < window.innerWidth * 0.7 || rect.height < window.innerHeight * 0.7) return;
+            holder.style.setProperty("display", "none", "important");
+          } catch (ignoredCurtain) {}
+        }, 8000);
+      })();
+    </script>
+    <script data-site-cloner-dedupe>
+      (function () {
+        var tries = 0;
+        function dedupe() {
+          var nuxt = document.getElementById("__nuxt");
+          var changed = false;
+
+          if (nuxt) {
+            // 1. Multiple <main> anywhere inside __nuxt (e.g. wrapped in multiple div.container):
+            var mains = nuxt.querySelectorAll("main");
+            if (mains.length >= 2) {
+              function getTopChild(el) {
+                while (el && el.parentElement && el.parentElement !== nuxt) {
+                  el = el.parentElement;
+                }
+                return el && el.parentElement === nuxt ? el : null;
+              }
+              var keptRoot = getTopChild(mains[0]);
+              for (var i = 1; i < mains.length; i++) {
+                var dupRoot = getTopChild(mains[i]);
+                if (dupRoot && dupRoot !== keptRoot) {
+                  dupRoot.remove();
+                  changed = true;
+                }
+              }
+            }
+
+            // 2. Identical top-level containers inside __nuxt:
+            if (!changed && nuxt.children.length >= 2) {
+              var c0 = nuxt.children[0];
+              var c1 = nuxt.children[1];
+              if (c0 && c1 && c0.tagName === c1.tagName && c0.className === c1.className) {
+                var h0 = c0.getBoundingClientRect().height;
+                var h1 = c1.getBoundingClientRect().height;
+                if (h0 > 300 && h1 > 300) {
+                  c1.remove();
+                  changed = true;
+                }
+              }
+            }
+
+            // 3. Classic direct header/main/footer deduplication. This runs even when
+            //    a duplicate <main> was already trimmed above: the re-mounted copy
+            //    carries its own <header>/<footer>/skip-link as extra top-level
+            //    children, and leaving them behind still doubles the (fixed) header
+            //    and the footer.
+            {
+              var keptMain = false,
+                keptHeader = false,
+                keptFooter = false;
+              var nodes = Array.prototype.slice.call(nuxt.children);
+              for (var j = 0; j < nodes.length; j++) {
+                var el = nodes[j];
+                var tag = el.tagName;
+                var cls = el.getAttribute("class") || "";
+                var isSkip = tag === "A" && /skip[- ]link/i.test(cls);
+                if (tag === "MAIN") {
+                  if (keptMain) {
+                    el.remove();
+                    changed = true;
+                  } else keptMain = true;
+                } else if (tag === "HEADER") {
+                  if (keptHeader) {
+                    el.remove();
+                    changed = true;
+                  } else keptHeader = true;
+                } else if (tag === "FOOTER") {
+                  if (keptFooter) {
+                    el.remove();
+                    changed = true;
+                  } else keptFooter = true;
+                } else if (isSkip && keptHeader) {
+                  el.remove();
+                  changed = true;
+                }
+              }
+            }
+          } else {
+            // 4. Duplicate <main> elements anywhere in document
+            var allMains = document.querySelectorAll("main");
+            if (allMains.length >= 2) {
+              for (var k = 1; k < allMains.length; k++) {
+                allMains[k].remove();
+                changed = true;
+              }
+            }
+          }
+
+          if (changed) {
+            try {
+              if (window.lenis && window.lenis.resize) window.lenis.resize();
+              window.dispatchEvent(new Event("resize"));
+              window.dispatchEvent(new Event("scroll"));
+              if (window.ScrollTrigger && window.ScrollTrigger.refresh) window.ScrollTrigger.refresh();
+            } catch (ignored) {}
+          }
+          return changed;
+        }
+        dedupe();
+        var timer = setInterval(function () {
+          // Keep watching past the first fix: the site runtime inserts its duplicate
+          // copy while it boots (and again on late hydration) - well after this
+          // inline script runs. ~12s is enough for hydration to settle.
+          dedupe();
+          if (++tries > 60) clearInterval(timer);
+        }, 200);
+      })();
+    </script>
+    <script data-site-cloner-text-overlay>
+      (function () {
+        function hashText(value) {
+          var s = (value || "").replace(/\s+/g, " ").trim();
+          var h1 = 2166136261,
+            h2 = 305419896;
+          for (var i = 0; i < s.length; i++) {
+            var c = s.charCodeAt(i);
+            h1 = Math.imul(h1 ^ c, 16777619);
+            h2 = Math.imul(h2 + c, 16777619) >>> 0;
+          }
+          return (h1 >>> 0).toString(16) + (h2 >>> 0).toString(16);
+        }
+        var NUXT_TEXTS = [
+          {
+            selector: "body",
+            texts: [
+              { path: [0, 0], index: 0, h: "a9a73ea01cebf6ef", pc: "50c5d1f20641ee8" },
+              { path: [0, 1, 0], index: 0, h: "8247e29e0a8fd30", pc: "50c5d1f20641ee8" },
+              { path: [0, 1, 1], index: 0, h: "d24a1a99698b2c66", pc: "50c5d1f20641ee8" },
+              { path: [1, 0, 0, 1], index: 0, h: "be831f24f18f72e3", pc: "36f4ee7d1c0a77a6" },
+              { path: [1, 0, 0, 1, 0], index: 0, h: "350ca8af50646a78", pc: "50c5d1f20641ee8" },
+              { path: [1, 0, 0, 1], index: 1, h: "89b725e7e2430686", pc: "7528d5dc419abe91" },
+              { path: [2, 0, 2, 0, 0], index: 0, h: "f056022d4738875e", pc: "fb002ba79dead5d8" },
+              { path: [2, 0, 2, 0, 0], index: 0, h: "350ca8af50646a78", pc: "825b0955e9bd9eae" },
+              { path: [2, 0, 2, 0, 1], index: 0, h: "20d9d92861f3aa9", pc: "fb002ba79dead5d8" },
+              { path: [2, 0, 2, 0, 1], index: 0, h: "350ca8af50646a78", pc: "fc2082023064e671" },
+              { path: [2, 0, 2, 1], index: 0, h: "43a01e7a6ea06319", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 3, 1, 0, 0, 0, 0, 0], index: 0, h: "52f50eaed9e97df9", pc: "e17573a6459f1319" },
+              { path: [2, 0, 3, 1, 0, 0, 0, 0, 0, 1], index: 0, h: "52f50eaed9e97df9", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 3, 1, 0, 1, 0, 0, 0], index: 0, h: "7edb0231a358cae", pc: "516fec8bbb00f6ce" },
+              { path: [2, 0, 3, 1, 0, 1, 0, 0, 0, 1], index: 0, h: "7edb0231a358cae", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 3, 1, 0, 2, 0, 0, 0], index: 0, h: "64fda4d7e8156f96", pc: "4b92837f605736b6" },
+              { path: [2, 0, 3, 1, 0, 2, 0, 0, 0, 1], index: 0, h: "64fda4d7e8156f96", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 3, 1, 0, 3, 0, 0, 0], index: 0, h: "e53489a515e17faa", pc: "83367abd819714ca" },
+              { path: [2, 0, 3, 1, 0, 3, 0, 0, 0, 1], index: 0, h: "e53489a515e17faa", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 3, 1, 0, 4, 0, 0, 0], index: 0, h: "73ac94c386272870", pc: "6c8888fbc65f38d0" },
+              { path: [2, 0, 3, 1, 0, 4, 0, 0, 0, 1], index: 0, h: "73ac94c386272870", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 0, 0, 0, 1], index: 0, h: "d5c636018094fd26", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 0, 0, 0, 2], index: 0, h: "9d372d9a84eed97", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 0, 0, 2, 0, 0], index: 0, h: "1fbe3167c9f0097c", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 1, 2, 0, 0, 1], index: 0, h: "f185beeab175fd51", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 1, 2, 0, 0, 2], index: 0, h: "eaaf0f1d5b1bca6", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 1, 2, 0, 1, 1], index: 0, h: "f185beeab175fd51", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 1, 2, 0, 1, 2], index: 0, h: "8482953f5d690508", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 1, 2, 0, 1, 3], index: 0, h: "5c7ea5af66f1285c", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 1, 2, 0, 2, 0, 0, 0, 0], index: 0, h: "1d1bd7572659ea0", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 1, 2, 0, 2, 0, 0, 0, 1], index: 0, h: "b07698dbf0a8c9fa", pc: "50c5d1f20641ee8" },
+              {
+                path: [2, 0, 4, 0, 1, 2, 0, 2, 0, 0, 1, 0, 0, 0, 0],
+                index: 0,
+                h: "e88a46f652d45777",
+                pc: "5e39ec7eb8b37097",
+              },
+              {
+                path: [2, 0, 4, 0, 1, 2, 0, 2, 0, 0, 1, 0, 0, 0, 0],
+                index: 1,
+                h: "e88a46f652d45777",
+                pc: "5e39ec7eb8b37097",
+              },
+              { path: [2, 0, 4, 0, 1, 2, 0, 3, 1], index: 0, h: "230c8c5946645aba", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 1, 2, 0, 3, 2], index: 0, h: "5c7ea5af66f1285c", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 2, 0, 0, 0], index: 0, h: "7ee3e93f497d5a16", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 2, 0, 0, 1], index: 0, h: "c39f9aa15db18b8e", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 2, 1, 1, 0, 0], index: 0, h: "6f000a7f80b0c042", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 0, 0, 1], index: 0, h: "ff3746d2f4d37f3d", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 0, 0, 2], index: 0, h: "de0c1fba7b64ae29", pc: "b8fbdfa1edadf2a" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 0, 0, 2], index: 0, h: "20ed70ba3713e80b", pc: "adbdec59da6f6960" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 0, 0, 2], index: 0, h: "d80c16487d64b14f", pc: "6aa6399964697246" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 1, 0, 1], index: 0, h: "9bc07dbfcdb4bdd8", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 1, 0, 2], index: 0, h: "de0c1fba7b64ae29", pc: "48b2ae604dc19275" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 1, 0, 2], index: 0, h: "1fed6f273813e99e", pc: "adbdec59da6f6960" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 1, 0, 2], index: 0, h: "d80c16487d64b14f", pc: "adf21fb8a3502591" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 2, 0, 1], index: 0, h: "e3d2a8cb3537c51", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 2, 0, 2], index: 0, h: "de0c1fba7b64ae29", pc: "9b2d7d2b8ca845c0" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 2, 0, 2], index: 0, h: "1eed6d943913eb31", pc: "adbdec59da6f6960" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 2, 0, 2], index: 0, h: "d80c16487d64b14f", pc: "6c3a38c3e236d8dc" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 3, 0, 1], index: 0, h: "ae67e20c4288adfb", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 3, 0, 2], index: 0, h: "de0c1fba7b64ae29", pc: "7246ec82cb8ef90b" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 3, 0, 2], index: 0, h: "1ded6c013a13ecc4", pc: "adbdec59da6f6960" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 3, 0, 2], index: 0, h: "d80c16487d64b14f", pc: "275a537a211d8c27" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 4, 0, 1], index: 0, h: "76975c3532341a54", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 4, 0, 2], index: 0, h: "de0c1fba7b64ae29", pc: "c5feefcda75ac56" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 4, 0, 2], index: 0, h: "1ced6a6e3b13ee57", pc: "adbdec59da6f6960" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 4, 0, 2], index: 0, h: "d80c16487d64b14f", pc: "664106c560043f72" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 5, 0, 0, 0], index: 0, h: "2308d6612f7d7738", pc: "79c29799592b3398" },
+              { path: [2, 0, 4, 0, 2, 1, 2, 0, 5, 0, 0, 0], index: 1, h: "2308d6612f7d7738", pc: "79c29799592b3398" },
+              { path: [2, 0, 4, 0, 4, 0, 0, 0, 1], index: 0, h: "9ca44676f36b7bf7", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 4, 0, 0, 1, 0, 0], index: 0, h: "cba7395183c0c0a", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 4, 0, 0, 1, 1, 0], index: 0, h: "9c03e130c1db99ed", pc: "50c5d1f20641ee8" },
+              {
+                path: [2, 0, 4, 0, 4, 0, 0, 1, 2, 0, 0, 0, 0],
+                index: 0,
+                h: "ffab3aaa73ae0f3f",
+                pc: "6503cb226dcdfb5f",
+              },
+              {
+                path: [2, 0, 4, 0, 4, 0, 0, 1, 2, 0, 0, 0, 0],
+                index: 1,
+                h: "ffab3aaa73ae0f3f",
+                pc: "6503cb226dcdfb5f",
+              },
+              { path: [2, 0, 4, 0, 4, 0, 2, 0, 0, 0], index: 0, h: "a87bc2ca6d3495f", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 4, 0, 2, 1, 1, 0, 0, 0], index: 0, h: "f2f1003ec9382267", pc: "539405f6c3580e87" },
+              { path: [2, 0, 4, 0, 4, 0, 2, 1, 1, 0, 0, 0], index: 1, h: "f2f1003ec9382267", pc: "539405f6c3580e87" },
+              { path: [2, 0, 4, 0, 4, 0, 4, 0, 0, 1], index: 0, h: "9ca44676f36b7bf7", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 4, 0, 4, 0, 1, 0, 0], index: 0, h: "cba7395183c0c0a", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 4, 0, 4, 0, 1, 0, 1], index: 0, h: "9c03e130c1db99ed", pc: "50c5d1f20641ee8" },
+              {
+                path: [2, 0, 4, 0, 4, 0, 4, 0, 1, 1, 0, 0, 0, 0],
+                index: 0,
+                h: "ffab3aaa73ae0f3f",
+                pc: "6503cb226dcdfb5f",
+              },
+              {
+                path: [2, 0, 4, 0, 4, 0, 4, 0, 1, 1, 0, 0, 0, 0],
+                index: 1,
+                h: "ffab3aaa73ae0f3f",
+                pc: "6503cb226dcdfb5f",
+              },
+              { path: [2, 0, 4, 0, 4, 0, 4, 1, 0, 0, 0, 0], index: 0, h: "67ef1c1c14be2c11", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 4, 0, 4, 1, 0, 0, 2, 0], index: 0, h: "bcf74b17bc2d97e2", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 4, 0, 4, 1, 0, 0, 3, 0], index: 0, h: "11505d8965cc3cbe", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 4, 0, 4, 1, 1, 0, 0, 0], index: 0, h: "72f5efd490e0a9c", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 4, 0, 4, 1, 1, 0, 1, 0], index: 0, h: "f9a8a345d5593ecc", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 4, 0, 4, 0, 4, 1, 1, 0, 2, 0], index: 0, h: "827c09c6f5711989", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 0, 0, 0, 1], index: 0, h: "8599571181d616c6", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 0, 0, 0, 2], index: 0, h: "7ac8c9ec21c7aa31", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 0, 1, 0], index: 0, h: "babbfba4c20e3f1d", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 0, 0, 0], index: 0, h: "9a4a7756a379391f", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 0, 1, 0, 0], index: 0, h: "72f5efd490e0a9c", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 0, 1, 0, 1], index: 0, h: "f9a8a345d5593ecc", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 0, 1, 0, 2], index: 0, h: "827c09c6f5711989", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 1, 0, 0], index: 0, h: "c609ec4055783837", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 1, 1, 0, 0, 0, 0], index: 0, h: "d2c8c28edf716019", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 1, 1, 0, 1, 0, 0], index: 0, h: "d4be896a41a0463f", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 1, 1, 0, 2, 0, 0], index: 0, h: "1354e8b7944153b6", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 1, 1, 0, 3, 0, 0], index: 0, h: "6506aa851b6961ca", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 1, 1, 0, 4, 0, 0], index: 0, h: "4303b92310d2c7d0", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 1, 1, 0, 5, 0, 0], index: 0, h: "18cbf2122ff7c715", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 1, 1, 0, 6, 0, 0], index: 0, h: "f6700df563d4986", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 2, 0, 0], index: 0, h: "7479994aeb485d81", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 2, 1, 0, 0, 0, 0], index: 0, h: "f95701ba7079076", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 1, 0, 2, 1, 0, 1, 0, 0], index: 0, h: "7afe4abf29d84b12", pc: "50c5d1f20641ee8" },
+              { path: [2, 0, 5, 2, 1], index: 0, h: "bb47b7b5fd257d7c", pc: "50c5d1f20641ee8" },
+            ],
+          },
+        ];
+        // Mirror targets are React trees; writing text before React hydrates turns an
+        // author edit into a hydration error ("Text content did not match"). The copied
+        // DOM already ships the edit, so pair re-application can wait for hydration.
+        var MIRROR = false;
+
+        // Whitespace-insensitive compare: the archived SSR text is minified while the
+        // emitted index.html is re-indented, so only REAL content edits count.
+        function norm(s) {
+          return (s || "").replace(/\s+/g, " ").trim();
+        }
+
+        // Resolves the text node under `root` at element-chain `path`, sitting right
+        // before the `index`-th element child of the target parent (comments and
+        // whitespace-only text nodes are skipped, matching how they were collected).
+        function locateText(root, path, index) {
+          var node = root;
+          for (var i = 0; i < path.length; i++) {
+            var child = node.children[path[i]];
+            if (!child) return null;
+            node = child;
+          }
+          var elementsSeen = 0;
+          var nodes = node.childNodes;
+          for (var j = 0; j < nodes.length; j++) {
+            var c = nodes[j];
+            if (c.nodeType === 1) {
+              if (elementsSeen === index) return null;
+              elementsSeen++;
+            } else if (c.nodeType === 3 && c.textContent && c.textContent.trim()) {
+              if (elementsSeen === index) return c;
+            }
+          }
+          return null;
+        }
+
+        // Record the text the author wrote in index.html BEFORE the site's own scripts
+        // run over the DOM; only nodes whose content actually changed are tracked.
+        var tracked = [];
+        // Baseline HASH -> replacement. Path tracking above only survives a runtime that
+        // keeps the DOM nodes it was given; a client-rendered app (React SPA) throws the
+        // server markup away and renders its own tree from data, so every path points at
+        // a detached node and the edit is lost. The baseline HASH survives that: the app
+        // re-renders the original copy, so hashing the live node matches the stored hash
+        // wherever that node now lives. Only strings the author actually changed are
+        // remembered.
+        var pairs = [];
+        // Hash -> replacement lookup: the overlay re-runs on every DOM mutation, so a
+        // linear scan over thousands of pairs froze heavy pages (brandappart).
+        var pairMap = Object.create(null);
+        // Pairs baked in by the exporter: baseline hash -> authored copy. They are
+        // authoritative (a later capture cannot overwrite them) and they cover copy the
+        // archived HTML never contained, e.g. text the site's own runtime renders from a
+        // data payload.
+        var SEEDED = [
+          { key: "d5c636018094fd26", text: "erere kocag gaming" },
+          { key: "9d372d9a84eed97", text: "​" },
+          { key: "f185beeab175fd51", text: "erere kocag lah" },
+          { key: "eaaf0f1d5b1bca6", text: "​" },
+          { key: "8599571181d616c6", text: "ererer erer" },
+          { key: "7ac8c9ec21c7aa31", text: "eadadawdwada" },
+        ];
+        for (var seeded = 0; seeded < SEEDED.length; seeded++) {
+          var seed = SEEDED[seeded];
+          if (!seed || !seed.key || !seed.text) continue;
+          pairMap[seed.key] = seed.text;
+          pairs.push({ key: seed.key, text: seed.text });
+        }
+        function remember(key, authored) {
+          var text = (authored || "").trim();
+          if (!key || !text || hashText(text) === key) return;
+          // A real edit is a phrase, not an entire archived script.
+          if (text.length > 2000) return;
+          if (pairMap[key] !== undefined) return;
+          pairMap[key] = text;
+          pairs.push({ key: key, text: text });
+        }
+        function rootFor(selector) {
+          try {
+            return document.querySelector(selector);
+          } catch (e) {
+            return null;
+          }
+        }
+        var captured = false;
+        // Capture as soon as the page actually contains the copy, then freeze. The static
+        // and shell targets have it at parse time; a React MIRROR renders it one commit
+        // later, after this inline script has already run - capturing eagerly there found
+        // an empty body and remembered nothing, which is why mirror edits were reverted.
+        // Baseline hashes in document order, for the position-based capture below.
+        var BASELINE = [];
+        for (var b0 = 0; b0 < NUXT_TEXTS.length; b0++)
+          for (var b1 = 0; b1 < NUXT_TEXTS[b0].texts.length; b1++) BASELINE.push(NUXT_TEXTS[b0].texts[b1].h);
+
+        function domTexts() {
+          var out = [];
+          if (!document.body) return out;
+          var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+          var node;
+          while ((node = walker.nextNode())) {
+            var tag = node.parentNode && node.parentNode.tagName;
+            if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT" || tag === "TEMPLATE") continue;
+            if (!norm(node.textContent)) continue;
+            out.push({ node: node, h: hashText(node.textContent) });
+          }
+          return out;
+        }
+
+        // Same computation as the clone-time pc hash: the parent's normalized text
+        // with this node's normalized text removed. Edits only change the node itself,
+        // so the remainder still matches; a shifted path lands in another context.
+        function contextMatches(node, region) {
+          if (!region.pc) return true;
+          var parent = node.parentNode;
+          if (!parent) return false;
+          var full = norm(parent.textContent || "");
+          var own = norm(node.textContent || "");
+          if (own && full.indexOf(own) !== -1) full = full.replace(own, "\u0000");
+          return hashText(full) === region.pc;
+        }
+
+        // The exported HTML is the file the author edits. Reading it back gives the
+        // authored copy WITHOUT racing the archived runtime: an async app bundle can
+        // hydrate and re-render the page before this body-end script runs
+        // (fromanother.love), so the live DOM may already hold the original copy again.
+        // A fresh parse of the served document still has the edit, and its element paths
+        // match the baseline exactly.
+        var authoredPending = false;
+        // Scan one parsed document (the served HTML, or the live tree as a fallback) and
+        // remember every region whose text differs from the baseline.
+        function captureDoc(container) {
+          for (var s = 0; s < NUXT_TEXTS.length; s++) {
+            var entry = NUXT_TEXTS[s];
+            var root = container.querySelector(entry.selector);
+            if (!root) continue;
+            for (var t = 0; t < entry.texts.length; t++) {
+              var region = entry.texts[t];
+              var node = locateText(root, region.path, region.index);
+              if (!node || !node.textContent || !node.textContent.trim()) continue;
+              if (hashText(node.textContent) === region.h) continue;
+              if (!contextMatches(node, region)) continue;
+              remember(region.h, node.textContent);
+            }
+          }
+        }
+        function captureAuthored() {
+          if (authoredPending) return;
+          authoredPending = true;
+          function finish(text) {
+            var used = false;
+            try {
+              if (text) {
+                captureDoc(new DOMParser().parseFromString(text, "text/html"));
+                used = true;
+              }
+            } catch (_captureError) {}
+            // file:// exports (XHR blocked) and hosts that do not answer with the page
+            // fall back to the live tree; the pc guard keeps that capture safe.
+            if (!used) {
+              try {
+                captureDoc(document);
+              } catch (_liveError) {}
+            }
+            captured = true;
+            apply();
+          }
+          try {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", location.pathname + location.search, true);
+            xhr.onload = function () {
+              finish(xhr.status === 200 || xhr.status === 0 ? xhr.responseText : "");
+            };
+            xhr.onerror = function () {
+              finish("");
+            };
+            xhr.send(null);
+          } catch (_xhrError) {
+            finish("");
+          }
+        }
+
+        function capture() {
+          if (captured) return;
+          var resolved = [];
+          // Mirrors render from edited component files, not from the served HTML, so
+          // their edits only exist in the live tree: keep the order-based pass below.
+          if (!MIRROR) {
+            captureAuthored();
+            return;
+          }
+          // Nothing on screen yet (the mirror has not rendered): try again on the next
+          // mutation instead of freezing an empty capture.
+          if (MIRROR && !resolved.length) {
+            // The React mirror renders the same copy in the same order, but under its own
+            // root, so the recorded element paths no longer resolve. Walk both lists in
+            // document order instead: while the texts agree nothing changed, and the first
+            // disagreement pairs the baseline entry with what the author wrote.
+            var dom = domTexts();
+            if (!dom.length) return;
+            // A positional disagreement alone is not evidence of an author edit: React
+            // mirrors reorder the copy (nav/footer hoisted, labels moved into overlay
+            // nodes such as .work-flying-text) and the archived runtime injects extra
+            // strings, which used to pair "See project" with "Work" and rewrite the
+            // wrong text. Only remember a mismatch when the lists realign right after
+            // it - a real edit leaves the rest of the page unchanged.
+            function agrees(a, b, count) {
+              var seen = 0;
+              while (a < BASELINE.length && b < dom.length && seen < count) {
+                if (BASELINE[a] !== dom[b].h) return false;
+                a++;
+                b++;
+                seen++;
+              }
+              return seen > 0;
+            }
+            var i = 0;
+            var j = 0;
+            while (i < BASELINE.length && j < dom.length) {
+              if (BASELINE[i] === dom[j].h) {
+                i++;
+                j++;
+                continue;
+              }
+              if (i + 1 < BASELINE.length && BASELINE[i + 1] === dom[j].h) {
+                i++;
+                continue;
+              }
+              if (j + 1 < dom.length && BASELINE[i] === dom[j + 1].h) {
+                j++;
+                continue;
+              }
+              if (agrees(i + 1, j + 1, 3)) {
+                remember(BASELINE[i], dom[j].node.textContent);
+                i++;
+                j++;
+                continue;
+              }
+              break;
+            }
+            captured = true;
+            return;
+          }
+          for (var i = 0; i < resolved.length; i++) {
+            var item = resolved[i];
+            if (hashText(item.node.textContent) === item.region.h) continue;
+            remember(item.region.h, item.node.textContent);
+            tracked.push({
+              node: item.node,
+              region: item.region,
+              root: item.root,
+              selector: item.selector,
+              authored: item.node.textContent,
+            });
+          }
+          captured = true;
+        }
+
+        // The archived runtime keeps re-rendering after boot, reverting the edited
+        // text; every DOM mutation (de-bounced) re-applies the authored copy. Nodes
+        // the runtime re-created are re-located by path before re-applying.
+        // Re-resolves an entry against the live DOM: the runtime may replace whole
+        // sections, so the root is re-queried by selector on every pass.
+        function resolve(t) {
+          var root = rootFor(t.selector);
+          if (!root || !root.isConnected) return null;
+          var node = locateText(root, t.region.path, t.region.index);
+          return node && node.isConnected ? { root: root, node: node } : null;
+        }
+
+        // Applies the authored (edited) text to every tracked region. Only touches
+        // nodes whose content differs, so an authored write that triggers the
+        // observer results in a no-op and the loop settles immediately.
+        // Re-applies by matching the baseline hash anywhere in the live tree, so it works
+        // even after the runtime replaced the whole document. Cheap when nothing was
+        // edited (pairs is empty), and only ever touches text nodes.
+        // Word-splitting runtimes (data-split-words) cut the authored sentence into
+        // one element per word; the first word can equal the original copy and its
+        // hash then matched, writing the whole sentence again inside it. The edit is
+        // already on screen when the text running on from this node, inside a close
+        // ancestor, starts with the authored copy (a duplicate elsewhere does not).
+        function squash(s) {
+          return (s || "").replace(/\s+/g, "");
+        }
+        function alreadyShown(el, replacement) {
+          var want = squash(replacement);
+          if (!want || !document.createRange) return false;
+          for (
+            var up = el.parentNode, steps = 0;
+            up && up !== document.body && steps < 4;
+            up = up.parentNode, steps++
+          ) {
+            try {
+              var range = document.createRange();
+              range.setStartBefore(el);
+              range.setEnd(up, up.childNodes.length);
+              var after = squash(range.toString());
+              if (after.length > want.length * 4) break;
+              if (after.indexOf(want) === 0) return true;
+            } catch (_r) {
+              return false;
+            }
+          }
+          return false;
+        }
+        function applyPairs() {
+          if (!pairs.length || !document.body) return;
+          try {
+            var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+            var node;
+            while ((node = walker.nextNode())) {
+              var parent = node.parentNode;
+              if (!parent) continue;
+              var tag = parent.tagName;
+              if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT" || tag === "TEMPLATE") continue;
+              if (!norm(node.textContent)) continue;
+              var value = hashText(node.textContent);
+              var replacement = pairMap[value];
+              if (replacement !== undefined && replacement !== node.textContent && !alreadyShown(parent, replacement))
+                node.textContent = replacement;
+            }
+          } catch (_p) {}
+        }
+        function apply() {
+          for (var i = 0; i < tracked.length; i++) {
+            try {
+              var t = tracked[i];
+              var hit = t.node && t.node.isConnected ? t : resolve(t);
+              if (!hit) continue;
+              t.root = hit.root;
+              t.node = hit.node;
+              if (t.node.textContent !== t.authored) {
+                t.node.textContent = t.authored;
+              }
+            } catch (_e) {}
+          }
+          applyPairs();
+        }
+        var pairsAt = 0;
+        capture();
+        // Mirror pages hydrate after this inline script runs; text writes before that
+        // point are exactly what React reports as "Text content did not match". Hold
+        // the hash-pair pass back until hydration has had time to finish.
+        if (MIRROR) pairsAt = Date.now() + 2000;
+        var observer = null;
+        function tick() {
+          if (!captured) capture();
+          apply();
+        }
+        // Animation runtimes mutate the DOM continuously; applying on every mutation
+        // (walking every text node) made the page unresponsive. Coalesce into a short
+        // timer instead - edits still land while scrolling, at a bounded cost.
+        var queued = 0;
+        function schedule() {
+          if (pairsAt || queued) return;
+          queued = window.setTimeout(function () {
+            queued = 0;
+            tick();
+          }, 150);
+        }
+        if (window.MutationObserver) {
+          observer = new MutationObserver(schedule);
+          observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+        }
+        window.addEventListener("load", function () {
+          if (pairsAt) return;
+          tick();
+        });
+        window.setTimeout(
+          function () {
+            pairsAt = 0;
+            tick();
+          },
+          MIRROR ? 2000 : 300,
+        );
+        window.setTimeout(tick, 2500);
+        window.setInterval(function () {
+          if (pairsAt) return;
+          tick();
+        }, 1200);
+      })();
+    </script>
+    <script data-site-cloner-image-overlay>
+      (function () {
+        var P = [
+          {
+            before:
+              "/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/f4f492320dc49087797c390abffdf38d75bd585b-600x800.png?w=512&fm=webp",
+            after: "media/f7ae444b51f55a0b39be33f73014be0c.jpg",
+            canvas: true,
+          },
+          {
+            before: "/files/z4rfkkmu/production/3264dc3050d9f3f483718f1ba3b7896b9ea9a775.mp4",
+            after: "media/67c4fcffa6ae0ff3357f3e02b2d2b71e.mp4",
+            video: true,
+          },
+          {
+            before: "/files/z4rfkkmu/production/a9efedb630224d47cb840e4b2b936d2cd0ff871a.mp4",
+            after: "media/f0997ae972299e44dea6fba3a730ff3f.mp4",
+            video: true,
+          },
+          {
+            before: "/files/z4rfkkmu/production/62e071ed2d4888d7c48b72d35db50b446dcffffa.mp4",
+            after: "media/3179402d72b34e50cd2380779d9a8e05.mp4",
+            video: true,
+          },
+          {
+            before: "/files/z4rfkkmu/production/39602ffe93f88dcb09683a0f6d38cfa4e33d6a38.mp4",
+            after: "media/0fbd18c6ced9f55a1c419958c063a5b6.mp4",
+            video: true,
+          },
+          {
+            before: "/files/z4rfkkmu/production/2071d123afba49b552e1d24184fb405724576302.mp4",
+            after: "media/e84a6197b041c49edd51adafa75e095c.mp4",
+            video: true,
+          },
+          {
+            before:
+              "/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/09d746dc848ed0f742e9e3f97ac9f9cbbec8dccf-600x800.png?w=512&fm=webp",
+            after: "media/3b234bc0fe57bfade823f789df92e51d.jpg",
+            canvas: true,
+          },
+          {
+            before:
+              "/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/879b4e21ce3388ecad5a83b0aa876bf9ed2b151e-600x800.png?w=512&fm=webp",
+            after: "media/0d035b219f747eb70752ffbfcd5befc9.png",
+            canvas: true,
+          },
+          {
+            before:
+              "/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/1f345fd25aa3a64e45124544561695866f90c528-600x800.png?w=512&fm=webp",
+            after: "media/1cccc11a18fd9ef5fb5abc19f62bcb2a.jpg",
+            canvas: true,
+          },
+          {
+            before:
+              "/_clone/api/cdn.sanity.io/images/z4rfkkmu/production/be06227df5584683a466ab79fd47c8f79b09f767-600x800.png?w=512&fm=webp",
+            after: "media/dece8df8d38e95440602d9b411489785.jpg",
+            canvas: true,
+          },
+        ];
+        function isData(value) {
+          return /^data:/i.test(value || "");
+        }
+        function path(value) {
+          try {
+            return new URL(value, location.href).pathname;
+          } catch (e) {
+            return value;
+          }
+        }
+        function name(value) {
+          var clean = (value || "").split("#")[0].split("?")[0];
+          var slash = clean.lastIndexOf("/");
+          return slash >= 0 ? clean.slice(slash + 1) : clean;
+        }
+        function parent(value) {
+          var p = (value || "").split("#")[0].split("?")[0].split("/");
+          return p.length > 1 ? p[p.length - 2] : "";
+        }
+        function eq(a, b) {
+          if (!a || !b) return false;
+          if (a === b) return true;
+          if (isData(a) || isData(b)) return false;
+          if (path(a) === path(b)) return true;
+          var na = name(a),
+            nb = name(b);
+          if (!na || na !== nb) return false;
+          return na.length >= 20 || /[0-9a-f]{8}/i.test(na) || parent(a) === parent(b);
+        }
+        function isVideo(pair) {
+          return (
+            !!pair.video || /^data:video\//i.test(pair.after) || /\.(mp4|webm|mov|m4v|ogv)([?#]|$)/i.test(pair.after)
+          );
+        }
+        function setVideo(el, value) {
+          if (el.getAttribute("src") === value) return;
+          el.setAttribute("src", value);
+          try {
+            el.muted = true;
+            el.load();
+            var p = el.play();
+            if (p && p.catch) p.catch(function () {});
+          } catch (e) {}
+        }
+        function videoHas(el, before) {
+          if (eq(el.getAttribute("poster") || "", before) || eq(el.getAttribute("src") || "", before)) return true;
+          var s = el.querySelectorAll("source[src]");
+          for (var i = 0; i < s.length; i++) {
+            if (eq(s[i].getAttribute("src") || "", before)) return true;
+          }
+          return false;
+        }
+        function token(value) {
+          var bits = (value || "").trim().split(" ");
+          for (var i = 0; i < bits.length; i++) {
+            if (bits[i]) return bits[i];
+          }
+          return "";
+        }
+        function setHas(value, before) {
+          if (!value) return false;
+          var parts = value.split(",");
+          for (var i = 0; i < parts.length; i++) {
+            if (eq(token(parts[i]), before)) return true;
+          }
+          return false;
+        }
+        function pic(img, after) {
+          var p = img.parentElement;
+          if (!p || p.tagName !== "PICTURE") return;
+          var s = p.querySelectorAll("source");
+          for (var i = 0; i < s.length; i++) {
+            if (s[i].hasAttribute("srcset")) {
+              if (s[i].getAttribute("srcset") !== after) s[i].setAttribute("srcset", after);
+            } else if (s[i].hasAttribute("src") && s[i].getAttribute("src") !== after) s[i].setAttribute("src", after);
+          }
+        }
+        // Lazy loaders that keep the file in a side attribute and put a blob: URL in
+        // src (obsidianassembly.com's string-lazy on /about) never match by src.
+        function lazyAttrs(el) {
+          var out = [],
+            a = el.attributes || [];
+          for (var i = 0; i < a.length; i++) {
+            var n = a[i].name.toLowerCase();
+            if (n === "src" || n === "srcset" || n === "class" || n === "style" || n === "alt") continue;
+            if (!/(^|-)(lazy|src|original|image|img)(-|$)/.test(n)) continue;
+            if (/[.](avif|webp|png|jpe?g|gif|svg)([?#]|$)/i.test(a[i].value || "")) out.push(a[i].name);
+          }
+          return out;
+        }
+        function lazyMatch(el, pair) {
+          var src = el.getAttribute("src") || "";
+          if (src === pair.after || (src && !/^(blob|data):/i.test(src))) return false;
+          var names = lazyAttrs(el),
+            hit = false;
+          for (var i = 0; i < names.length; i++) {
+            var v = el.getAttribute(names[i]) || "";
+            if (v === pair.after || eq(v, pair.before)) hit = true;
+          }
+          if (!hit) return false;
+          for (var k = 0; k < names.length; k++) el.setAttribute(names[k], pair.after);
+          return true;
+        }
+        function apply() {
+          for (var i = 0; i < P.length; i++) {
+            var pair = P[i];
+            var nodes = document.querySelectorAll("img,source,video");
+            for (var j = 0; j < nodes.length; j++) {
+              var el = nodes[j];
+              var tag = el.tagName;
+              var src = el.getAttribute("src") || "";
+              var srcset = el.getAttribute("srcset") || "";
+              var poster = el.getAttribute("poster") || "";
+              if (tag === "VIDEO") {
+                if (isVideo(pair)) {
+                  if (src !== pair.after && videoHas(el, pair.before)) setVideo(el, pair.after);
+                  continue;
+                }
+                if (poster && poster !== pair.after && eq(poster, pair.before)) el.setAttribute("poster", pair.after);
+                continue;
+              }
+              if (isVideo(pair)) continue;
+              if (tag === "SOURCE") {
+                if (eq(src, pair.before) || setHas(srcset, pair.before)) {
+                  if (srcset) el.setAttribute("srcset", pair.after);
+                  if (src) el.setAttribute("src", pair.after);
+                }
+                continue;
+              }
+              // Framer/Next hydration can restore the original srcset while keeping
+              // the edited src. The browser then renders the default image from
+              // srcset, so drop it as soon as this <img> points at the replacement.
+              if (src === pair.after) {
+                if (srcset) el.removeAttribute("srcset");
+                pic(el, pair.after);
+                continue;
+              }
+              if (eq(src, pair.before) || setHas(srcset, pair.before) || (tag === "IMG" && lazyMatch(el, pair))) {
+                el.setAttribute("src", pair.after);
+                el.removeAttribute("srcset");
+                pic(el, pair.after);
+              } else if (setHas(srcset, pair.after)) {
+                el.setAttribute("src", pair.after);
+                el.removeAttribute("srcset");
+              }
+            }
+          }
+        }
+        apply();
+        setInterval(apply, 1000);
+        if (window.MutationObserver)
+          new MutationObserver(apply).observe(document.documentElement, {
+            subtree: true,
+            childList: true,
+            attributes: true,
+            attributeFilter: ["src", "srcset", "poster"],
+          });
+      })();
+    </script>
+    <script data-site-cloner-element-overlay>
+      (function () {
+        var P = [
+          {
+            path: [1, 0, 5, 0, 1, 2, 0, 2, 1, 1, 0, 0, 0, 0, 1],
+            index: 1,
+            tag: "button",
+            sig: "button||interactive video-container__play-fullscreen|Play Fullscreen Video|",
+            anc: "9f88a3e3464340b|82594c28782157cf|4f59b07d7921227a|d11f53956d25b99c|67b337f1190aa082|84ec2581d848552c|f6d0511a8e004e43|16ff7e85c79f32bc|d0ba95f292b6b093|135292711b4528c6|3425f41495f97e95|181745e2f2f57de1|ebcd26ed453b4bf6|88ec428b8c142e00|13de9e88bb2ccf85",
+            nth: 0,
+            css: { backgroundImage: "url(/api/public/clone-media/f7ae444b51f55a0b39be33f73014be0c.jpg)" },
+          },
+        ];
+        var I = [];
+        var CACHE = [];
+        function norm(v) {
+          return (v || "").replace(/\s+/g, " ").trim();
+        }
+        function assetName(v) {
+          if (/^data:/i.test(v || "")) return v;
+          var c = (v || "").split("#")[0].split("?")[0];
+          var s = c.lastIndexOf("/");
+          return s >= 0 ? c.slice(s + 1) : c;
+        }
+        function sigOf(el) {
+          var parts = [
+            el.getAttribute("id") || "",
+            el.getAttribute("class") || "",
+            el.getAttribute("data-framer-name") || el.getAttribute("aria-label") || "",
+            assetName(el.getAttribute("src") || el.getAttribute("poster") || el.getAttribute("href") || ""),
+          ];
+          var out = [(el.tagName || "").toLowerCase()];
+          for (var i = 0; i < parts.length; i++) out.push(norm(parts[i]).slice(0, 120));
+          return out.join("|").slice(0, 320);
+        }
+        function kids(el) {
+          var out = [],
+            nodes = el.childNodes;
+          for (var i = 0; i < nodes.length; i++) if (nodes[i].nodeType === 1) out.push(nodes[i]);
+          return out;
+        }
+        function byPath(edit) {
+          var node = document.querySelector("#__nuxt") || document.body;
+          if (!node) return null;
+          for (var i = 0; i < edit.path.length; i++) {
+            node = kids(node)[edit.path[i]];
+            if (!node) return null;
+          }
+          return kids(node)[edit.index] || null;
+        }
+        function tagOf(el) {
+          return (el.tagName || "").toLowerCase();
+        }
+        function hashText(value) {
+          var s = (value || "").replace(/\s+/g, " ").trim();
+          var h1 = 2166136261,
+            h2 = 305419896;
+          for (var i = 0; i < s.length; i++) {
+            var c = s.charCodeAt(i);
+            h1 = Math.imul(h1 ^ c, 16777619);
+            h2 = Math.imul(h2 + c, 16777619) >>> 0;
+          }
+          return (h1 >>> 0).toString(16) + h2.toString(16);
+        }
+        function textOf(el) {
+          return norm(el.textContent || "").slice(0, 240);
+        }
+        function ancOf(el) {
+          var out = [],
+            node = el.parentElement,
+            guard = 0;
+          while (node && node !== document.body && node !== document.documentElement && guard++ < 16) {
+            out.push(hashText(sigOf(node)));
+            node = node.parentElement;
+          }
+          return out.join("|");
+        }
+        var IDCACHE = typeof WeakMap === "function" ? new WeakMap() : null;
+        function identityOf(el) {
+          if (IDCACHE) {
+            var hit = IDCACHE.get(el);
+            if (hit) return hit;
+          }
+          var id = { text: textOf(el), anc: ancOf(el) };
+          if (IDCACHE) IDCACHE.set(el, id);
+          return id;
+        }
+        function sigBase(sig) {
+          var p = sig.split("|");
+          return p.length === 5 ? p.slice(0, 4).join("|") : sig;
+        }
+        function sigScore(value, wanted) {
+          if (value === wanted) return 60;
+          var have = value.split("|"),
+            want = wanted.split("|");
+          if (have.length === 5 && want.length === 5 && have.slice(0, 4).join("|") === want.slice(0, 4).join("|"))
+            return 20;
+          if (
+            have.length === 5 &&
+            want.length === 5 &&
+            have[0] === want[0] &&
+            have[1] === want[1] &&
+            have[3] === want[3] &&
+            have[4] === want[4] &&
+            drift(have[2], want[2])
+          )
+            return 20;
+          return -500;
+        }
+        function drift(a, b) {
+          var ta = a.split(" ").filter(Boolean),
+            tb = b.split(" ").filter(Boolean);
+          var s = ta.length <= tb.length ? ta : tb,
+            l = ta.length <= tb.length ? tb : ta;
+          if (!s.length || l.length - s.length > 2) return false;
+          for (var i = 0; i < s.length; i++) if (l.indexOf(s[i]) < 0) return false;
+          return true;
+        }
+        function textScore(el, edit) {
+          if (!edit.text) return 0;
+          var text = identityOf(el).text;
+          if (!text) return 0;
+          if (text === edit.text) return 2000;
+          var head = edit.text.slice(0, 80);
+          if (head && text.indexOf(head) === 0) return 400;
+          var mid = edit.text.slice(0, 48);
+          if (mid.length >= 24 && text.indexOf(mid) !== -1) return 150;
+          return 0;
+        }
+        function ancScore(el, edit) {
+          if (!edit.anc) return 0;
+          var chain = identityOf(el).anc.split("|"),
+            wanted = edit.anc.split("|"),
+            common = 0;
+          while (common < chain.length && common < wanted.length && chain[common] === wanted[common]) common++;
+          return common * 15 + (common && common === wanted.length ? 10 : 0);
+        }
+        function confirms(el, edit) {
+          if (edit.text) {
+            if (textScore(el, edit) >= 400) return true;
+            if (identityOf(el).text) return false;
+          }
+          if (edit.anc) return ancScore(el, edit) >= 15;
+          return true;
+        }
+        var INDEX = null,
+          BYTAG = null;
+        function buildIndex() {
+          INDEX = {};
+          BYTAG = {};
+          var nodes = document.querySelectorAll("body *");
+          for (var i = 0; i < nodes.length; i++) {
+            var tag = tagOf(nodes[i]);
+            var key = tag + "\u0000" + sigBase(sigOf(nodes[i]));
+            if (!INDEX[key]) INDEX[key] = [];
+            INDEX[key].push(nodes[i]);
+            if (!BYTAG[tag]) BYTAG[tag] = [];
+            BYTAG[tag].push(nodes[i]);
+          }
+        }
+        function find(edit, i) {
+          var el = byPath(edit);
+          var pathEl = el && tagOf(el) === edit.tag ? el : null;
+          if (!edit.sig) return pathEl;
+          if (pathEl && sigScore(sigOf(pathEl), edit.sig) >= 20 && confirms(pathEl, edit)) {
+            CACHE[i] = pathEl;
+            return pathEl;
+          }
+          var cached = CACHE[i];
+          if (cached && cached.isConnected && tagOf(cached) === edit.tag && sigScore(sigOf(cached), edit.sig) >= 20)
+            return cached;
+          if (!INDEX) buildIndex();
+          var nodes = INDEX[(edit.tag || "") + "\u0000" + sigBase(edit.sig)] || [];
+          // A state class toggled at runtime moves the node to another bucket.
+          if (!nodes.length) nodes = BYTAG[edit.tag || ""] || [];
+          var best = null,
+            bestScore = 0,
+            sameSig = 0;
+          for (var j = 0; j < nodes.length; j++) {
+            var sig = sigOf(nodes[j]);
+            var base = sigScore(sig, edit.sig);
+            if (base < 20) continue;
+            var score = base + textScore(nodes[j], edit) + ancScore(nodes[j], edit);
+            if (sig === edit.sig) {
+              if (typeof edit.nth === "number" && edit.nth >= 0) {
+                score += sameSig === edit.nth ? 30 : -Math.min(20, Math.abs(sameSig - edit.nth));
+              }
+              sameSig++;
+            }
+            if (score > bestScore) {
+              bestScore = score;
+              best = nodes[j];
+            }
+          }
+          var found = best || pathEl;
+          if (found) CACHE[i] = found;
+          return found;
+        }
+        function prop(key) {
+          return key.charAt(0) === "-"
+            ? key
+            : key.replace(/[A-Z]/g, function (letter) {
+                return "-" + letter.toLowerCase();
+              });
+        }
+        function applyInserts() {
+          var keep = {};
+          for (var a = 0; a < I.length; a++) keep[I[a].id] = true;
+          var old = document.querySelectorAll("[data-sc-insert]");
+          var seen = {};
+          for (var b = 0; b < old.length; b++) {
+            var oldId = old[b].getAttribute("data-sc-insert");
+            if (keep[oldId] && !seen[oldId]) {
+              seen[oldId] = 1;
+              continue;
+            }
+            if (old[b].parentNode) old[b].parentNode.removeChild(old[b]);
+          }
+          for (var c = 0; c < I.length; c++) {
+            var ins = I[c];
+            if (document.querySelector('[data-sc-insert="' + ins.id + '"]')) continue;
+            var holder = document.createElement("template");
+            holder.innerHTML = ins.html;
+            var node = holder.content ? holder.content.firstElementChild : holder.firstElementChild;
+            if (!node) continue;
+            node.setAttribute("data-sc-insert", ins.id);
+            var anchor = ins.where === "body" ? null : find(ins, P.length + c);
+            if (ins.where === "inside" && anchor) anchor.appendChild(node);
+            else if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(node, anchor.nextSibling);
+            else document.body.appendChild(node);
+          }
+        }
+        function apply() {
+          applyInserts();
+          buildIndex();
+          for (var i = 0; i < P.length; i++) {
+            var edit = P[i];
+            var el = find(edit, i);
+            if (!el || !el.style) continue;
+            if (edit.attrs)
+              for (var an in edit.attrs) {
+                if (Object.prototype.hasOwnProperty.call(edit.attrs, an) && el.getAttribute(an) !== edit.attrs[an])
+                  el.setAttribute(an, edit.attrs[an]);
+              }
+            if (edit.remove) el.style.setProperty("display", "none", "important");
+            var css = edit.css;
+            if (css)
+              for (var key in css) {
+                if (!Object.prototype.hasOwnProperty.call(css, key)) continue;
+                el.style.setProperty(prop(key), css[key], "important");
+                if (key === "color") el.style.setProperty("--framer-text-color", css[key], "important");
+              }
+          }
+        }
+        apply();
+        setInterval(apply, 1000);
+        if (window.MutationObserver)
+          new MutationObserver(function () {
+            INDEX = null;
+            apply();
+          }).observe(document.documentElement, { subtree: true, childList: true });
+      })();
+    </script>
+  
+  <script data-site-cloner-api-proxy>(function () {
+  var PREFIX = "/_clone/api/";
+  var HOSTS = /(?:^|\.)(?:sanity\.io)$/i;
+  function local(url) {
+    var m = /^https?:\/\/([a-z0-9.-]+)\/(.*)$/i.exec(String(url || ""));
+    if (!m || !HOSTS.test(m[1])) return null;
+    return PREFIX + m[1] + "/" + m[2];
+  }
+  var nativeFetch = window.fetch;
+  if (typeof nativeFetch === "function") {
+    window.fetch = function (input, init) {
+      var raw = typeof input === "string" ? input : input && input.url;
+      var hit = local(raw);
+      if (hit) {
+        if (typeof input === "string") input = hit;
+        else if (typeof Request !== "undefined" && input instanceof Request) input = new Request(hit, input);
+        else input = hit;
+      }
+      return nativeFetch.call(this, input, init);
+    };
+  }
+  var open = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function (method, url) {
+    var args = Array.prototype.slice.call(arguments);
+    var hit = local(url);
+    if (hit) args[1] = hit;
+    return open.apply(this, args);
+  };
+  // Canvas/WebGL textures load through an <img> (three.js ImageLoader, R3F
+  // useTexture) with `crossOrigin` set, and such a request is CORS-blocked from
+  // the clone's origin - the loader then rejects with "Could not load
+  // https://cdn.sanity.io/..." and the renderer never starts. Routing every image
+  // src through the same-origin proxy (below) makes those loads succeed.
+  try {
+    var proto = window.HTMLImageElement && HTMLImageElement.prototype;
+    var descriptor = proto && Object.getOwnPropertyDescriptor(proto, "src");
+    if (descriptor && descriptor.set) {
+      Object.defineProperty(proto, "src", {
+        configurable: true,
+        enumerable: descriptor.enumerable,
+        get: descriptor.get,
+        set: function (value) {
+          var hit = local(value);
+          descriptor.set.call(this, hit || value);
+        },
+      });
+    }
+  } catch (error) {}
+})();</script>
+  </body>
+</html>
